@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+ "$basetexture" "mall_member/figardo/icon_radio"
+ "$vertexcolor" 1
+ "$vertexalpha" 1
+ "$translucent" 1
+}
