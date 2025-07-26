@@ -7,7 +7,7 @@ include("shared.lua")
 
 ENT.Model = Model("models/player/phoenix.mdl")
 ENT.Anim = "idle_all_01"
-ENT.HatModel = Model("models/ttt/deerstalker.mdl")
+ENT.HatModel = Model("models/mall_member/figardo/deerstalker.mdl")
 ENT.HatShouldBoneMerge = true
 
 util.AddNetworkString("TraitorJoe_BuyItem")
