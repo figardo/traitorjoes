@@ -18,7 +18,12 @@ function ENT:DoAnnoy(ply)
 		ply = Entity(1)
 	end
 
-	parent:Annoy(ANNOY_HAT, ply)
+	-- don't trigger if the hat and the wearer are removed at the same time (e.g. cleanup)
+	timer.Simple(0, function()
+		if !IsValid(parent) or !IsValid(ply) then return end
+
+		parent:Annoy(ANNOY_HAT, ply)
+	end)
 end
 
 function ENT:OnTakeDamage(dmginfo)

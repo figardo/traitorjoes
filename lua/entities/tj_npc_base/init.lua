@@ -33,7 +33,9 @@ function ENT:SpawnHat()
 	if !IsValid(hat) then return end
 
 	hat:SetModel(self.HatModel)
+
 	hat.ShouldBoneMerge = self.HatShouldBoneMerge
+	hat.Offset = self.HatOffset
 
 	hat:SetPos(self:GetPos() + Vector(0,0,70))
 	hat:SetAngles(self:GetAngles())

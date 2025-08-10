@@ -1,5 +1,7 @@
 if game.GetMap() != "mall_store_size" then return end
 
+DEFINE_BASECLASS("tj_npc_base")
+
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_shop.lua")
 AddCSLuaFile("shared.lua")
@@ -13,10 +15,39 @@ ENT.HatShouldBoneMerge = true
 util.AddNetworkString("TraitorJoe_BuyItem")
 util.AddNetworkString("TraitorJoe_ApplyForMembership")
 util.AddNetworkString("TraitorJoe_Redeem")
+util.AddNetworkString("TraitorJoe_SpawnTrash")
+util.AddNetworkString("TraitorJoe_SpawnDefib")
+
+function ENT:Think()
+	BaseClass.Think(self)
+
+	local pos = self:GetPos()
+	local jailMin = TRAITORJOE.Joe.Jail.Min
+	local jailMax = TRAITORJOE.Joe.Jail.Max
+
+	local min = Vector(math.min(jailMin.x, jailMax.x), math.min(jailMin.y, jailMax.y), math.min(jailMin.z, jailMax.z))
+	local max = Vector(math.max(jailMin.x, jailMax.x), math.max(jailMin.y, jailMax.y), math.max(jailMin.z, jailMax.z))
+
+	if pos.x >= min.x and pos.x <= max.x
+	and pos.y >= min.y and pos.y <= max.y
+	and pos.z >= min.z and pos.z <= max.z then
+		return
+	end
+
+	for _, ent in ents.Iterator() do
+		if ent:GetName() == "tj_traitorjoe_spawn" then
+			self:SetPos(ent:GetPos())
+			self:SetAngles(ent:GetAngles())
+			self:Annoy(ANNOY_MOVED)
+
+			break
+		end
+	end
+end
 
 local prizeThreshold = 5
 function ENT:BuyItem(ply, id)
-	if ply:GetCredits() == 0 then return end
+	if ply:GetCredits() <= 0 then return end
 
 	local item = self.EquipmentItems[id]
 	if isnumber(item.id) then

@@ -372,68 +372,81 @@ if engine.ActiveGamemode() != "terrortown" then
 	end
 end
 
-local tbl = weapons.Get("weapon_ttt_m16")
+local function LoadExtras()
+	local tbl = weapons.Get("weapon_ttt_m16")
 
-tbl.PrintName			= "Carbine"
+	tbl.PrintName			= "Carbine"
 
-tbl.ViewModel			= "models/weapons/v_rif_m4a1.mdl"
-tbl.WorldModel			= "models/weapons/w_rif_m4a1.mdl"
-tbl.ViewModelFOV		= 82
-tbl.ViewModelFlip 		= true
+	tbl.ViewModel			= "models/weapons/v_rif_m4a1.mdl"
+	tbl.WorldModel			= "models/weapons/w_rif_m4a1.mdl"
+	tbl.ViewModelFOV		= 82
+	tbl.ViewModelFlip 		= true
 
-tbl.IronSightsPos 		= Vector( 6, 0, 1 )
-tbl.IronSightsAng 		= Vector( 2.6, 1.37, 3.5 )
+	tbl.IronSightsPos 		= Vector( 6, 0, 1 )
+	tbl.IronSightsAng 		= Vector( 2.6, 1.37, 3.5 )
 
-tbl.Primary.Delay			= 1.1
-tbl.Primary.Recoil			= 8
-tbl.Primary.Automatic = false
-tbl.Primary.Ammo = "357"
-tbl.Primary.Damage = 70
-tbl.Primary.Cone = 0.005
-tbl.Primary.ClipSize = 10
-tbl.Primary.ClipMax = 20
-tbl.Primary.DefaultClip = 10
+	tbl.Primary.Delay			= 1.1
+	tbl.Primary.Recoil			= 8
+	tbl.Primary.Automatic = false
+	tbl.Primary.Ammo = "357"
+	tbl.Primary.Damage = 70
+	tbl.Primary.Cone = 0.005
+	tbl.Primary.ClipSize = 10
+	tbl.Primary.ClipMax = 20
+	tbl.Primary.DefaultClip = 10
 
-weapons.Register(tbl, "weapon_ttt_carbine")
+	weapons.Register(tbl, "weapon_ttt_carbine")
 
-tbl = weapons.Get("weapon_ttt_defuser")
+	tbl = weapons.Get("weapon_ttt_defuser")
 
-tbl.PrintName			= "Defibrillator"
+	tbl.PrintName			= "Defibrillator"
 
-tbl.PrimaryAttack = function(self)
-	if CLIENT then return end
+	tbl.PrimaryAttack = function(self)
+		if CLIENT then return end
 
-	local ply = self:GetOwner()
+		local ply = self:GetOwner()
 
-	local tr = util.TraceLine({
-		start  = ply:GetShootPos(),
-		endpos = ply:GetShootPos() + ply:GetAimVector() * 84,
-		filter = ply,
-		mask   = MASK_SHOT
-	})
-	if !tr.Hit then return end
+		local tr = util.TraceLine({
+			start  = ply:GetShootPos(),
+			endpos = ply:GetShootPos() + ply:GetAimVector() * 128,
+			filter = ply,
+			mask   = MASK_SHOT
+		})
+		if !tr.Hit then return end
 
-	local ent = tr.Entity
-	if !ent then return end
+		local ent = tr.Entity
+		if !ent then return end
 
-	if ent:GetName() != "tj_shitleton" then return end
+		if ent:GetName() != "tj_shitleton" then return end
 
-	local spawn
-	for _, e in ents.Iterator() do
-		if e:GetName() != "tj_bku_spawn" then continue end
+		local spawn
+		for _, e in ents.Iterator() do
+			if e:GetName() != "tj_bku_spawn" then continue end
 
-		spawn = e
-		break
+			spawn = e
+			break
+		end
+
+		if !IsValid(spawn) then return end
+
+		ent:Remove()
+
+		local npc = ents.Create("tj_npc_bku")
+		npc:SetPos(spawn:GetPos())
+		npc:SetAngles(spawn:GetAngles())
+		npc:Spawn()
+
+		self:EmitSound("ambient/energy/zap7.wav")
 	end
 
-	if !IsValid(spawn) then return end
+	if CLIENT then
+		function tbl:Initialize()
+			self:AddHUDHelp("Press MOUSE1 to revive a corpse.", nil, false)
 
-	ent:Remove()
+			return self.BaseClass.Initialize(self)
+		end
+	end
 
-	local npc = ents.Create("tj_npc_bku")
-	npc:SetPos(spawn:GetPos())
-	npc:SetAngles(spawn:GetAngles())
-	npc:Spawn()
+	weapons.Register(tbl, "weapon_ttt_tj_defib")
 end
-
-weapons.Register(tbl, "weapon_ttt_tj_defib")
+hook.Add("PostGamemodeLoaded", "TraitorJoesExtraWeapons", LoadExtras)

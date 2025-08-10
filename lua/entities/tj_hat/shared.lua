@@ -5,6 +5,11 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
+ENT.ModelOffsets = {
+	["models/player/mafia_hat_medium.mdl"] = {pos = Vector(6.5, 0, 0), ang = Angle(0, 270, 270)},
+	["models/mall_member/figardo/vending_hat.mdl"] = {pos = Vector(6.5, 1.5, 0), ang = Angle(270, 180, 0)}
+}
+
 function ENT:SetupDataTables()
 	self:NetworkVar("Bool", "BeingWorn")
 end
@@ -24,9 +29,8 @@ function ENT:Initialize()
 	end
 end
 
-local offsetPos = Vector(6.5, 0, 0)
-local offsetAng = Angle(0, 270, 270)
 local vector0 = Vector(0, 0, 0)
+local defaultOffset = {pos = Vector(0, 0, 0), ang = Angle(0, 0, 0)}
 
 function ENT:Think()
 	if self:IsEffectActive(EF_BONEMERGE) then return end
@@ -40,6 +44,10 @@ function ENT:Think()
 	local apos, aang = parent:GetBonePosition(boneindex)
 
 	local moffset = vector0
+
+	local offset = self.ModelOffsets[self:GetModel()] or defaultOffset
+	local offsetPos = offset.pos
+	local offsetAng = offset.ang
 
 	apos = apos + aang:Forward() * offsetPos.x
 	apos = apos + aang:Right() * offsetPos.y

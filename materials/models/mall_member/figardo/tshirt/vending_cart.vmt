@@ -1,0 +1,7 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\mall_member\figardo\tshirt\vending_cart"
+	"$alphatest" "1"
+	"$nocull" "1"
+
+}

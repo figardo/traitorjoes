@@ -2,19 +2,88 @@ if game.GetMap() != "mall_store_size" then return end
 
 include("shared.lua")
 
-ENT.PrintName = "Base"
+ENT.PrintName = "base"
+
+local spawnList = {
+	"weapon_ttt_beacon",
+	"weapon_ttt_binoculars",
+	"weapon_ttt_c4",
+	"weapon_ttt_carbine",
+	"weapon_ttt_confgrenade",
+	"weapon_ttt_cse",
+	"weapon_ttt_decoy",
+	"weapon_ttt_defuser",
+	"weapon_ttt_flaregun",
+	"weapon_ttt_glock",
+	"weapon_ttt_health_station",
+	"weapon_ttt_knife",
+	"weapon_ttt_m16",
+	"weapon_ttt_phammer",
+	"weapon_ttt_push",
+	"weapon_ttt_radio",
+	"weapon_ttt_sipistol",
+	"weapon_ttt_smokegrenade",
+	"weapon_ttt_stungun",
+	"weapon_ttt_teleport",
+	"weapon_ttt_unarmed",
+	"weapon_ttt_wtester",
+	"weapon_zm_carry",
+	"weapon_zm_improvised",
+	"weapon_zm_mac10",
+	"weapon_zm_molotov",
+	"weapon_zm_pistol",
+	"weapon_zm_revolver",
+	"weapon_zm_rifle",
+	"weapon_zm_shotgun",
+	"weapon_zm_sledge"
+}
+
+local function baseTalk(self)
+	local tbl = {}
+
+	tbl["Base.WhoAreYou"] = {
+		{text = "Base.WhoAreYou.1"},
+		{text = "Base.WhoAreYou.2"},
+		{text = "Base.WhoAreYou.3"},
+		{text = "Base.WhoAreYou.4"},
+		{text = "Base.WhoAreYou.5"},
+		{text = "Base.WhoAreYou.6"}
+	}
+
+	tbl["Base.Give"] = {
+		{text = "Base.Give.1"},
+		{text = "Base.Give.2"},
+		{text = "Base.Give.3", param = spawnList[math.random(#spawnList)]},
+		{text = "Base.Give.4"}
+	}
+
+	return tbl
+end
 
 ENT.ChatLayout = {
-	-- when we reach initial.chat, follow up with this text
+	-- this chat system is poop and you probably shouldn't use it anywhere
+	-- but here's a cheat sheet just in case
+	-- when we reach initial.chat, follow up with this continual text
 	-- ["initial.chat"] = {{face = "smile", text = "dialogue.1"}, {face = "smirk", "dialogue.2"}, {face = "annoyed", "dialogue.3"}},
 	-- ["dialogue.3"] = { -- when we reach dialogue.3, offer these choices
-	-- 		["choice.1"] = {"series", "of", "dialogue"},
-	--		["choice.2"] = {"other", "dialogue", "option"}
+	-- 		["choice.1"] = {text = "series", text = "of", text = "dialogue"},
+	--		["choice.2"] = {text = "other", text = "dialogue", text = "option"}
 	-- }
-	["Error.1"] = {"Error.2", "Error.3"}
+	["Error.1"] = {"Error.2", "Error.3"},
+
+	["Base.Intro.1"] = {
+		{text = "Base.Intro.2"},
+		{text = "Base.Intro.3"},
+	},
+	["Base.Intro.3"] = baseTalk,
+	["Base.Main"] = baseTalk,
+	["Base.WhoAreYou.6"] = baseTalk,
+	["Base.Give.4"] = baseTalk
 }
 
 ENT.ChatHooks = {}
+
+ENT.TJGlobalName = "Base"
 
 ENT.FaceFolder = "base"
 ENT.HatTexture = Material("mall_member/figardo/faces/joe/hat")
@@ -102,6 +171,7 @@ function ENT:ShowChatScreen(chatOverride)
 		if ent:GetClass() != "tj_hat" then continue end
 
 		dface.Hat = self.HatTexture
+		dface.HatWidthOverride = self.HatWidthOverride
 		break
 	end
 
@@ -124,11 +194,16 @@ function ENT:ShowChatScreen(chatOverride)
 
 	dframe:MakePopup()
 
+	TRAITORJOE[self.TJGlobalName].Met = true -- cleanup bypass
 	self.Met = true
 end
 
 function ENT:GetInitialChat()
-	return {face = "annoyed", text = "Error.1"}
+	if TRAITORJOE.Base.Met then
+		return {face = "neutral", text = "Base.Main"}
+	end
+
+	return {face = "neutral", text = "Base.Intro.1"}
 end
 
 function ENT:CreateChatOptions(key, face, idx)
@@ -218,7 +293,14 @@ function ENT:CreateChatOptions(key, face, idx)
 			end
 
 			local str = self:ChatToString(data.text)
+			if data.param then
+				str = string.format(str, data.param)
+			end
+
 			dtext:SetText(str)
+
+			func = self.ChatHooks[data.text]
+			if func then func(self) end
 
 			if !self.ChatResponse then
 				self.ChatResponse = k

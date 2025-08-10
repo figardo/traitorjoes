@@ -1,0 +1,8 @@
+-- very stripped down version of https://steamcommunity.com/sharedfiles/filedetails/?id=314470705
+
+ENT.Type = "anim"
+ENT.Base = "base_gmodentity"
+ENT.PrintName = "Webradio (Simple)"
+ENT.Author = "Flowx"
+ENT.Spawnable = true
+ENT.Category = "Audio Equipment"

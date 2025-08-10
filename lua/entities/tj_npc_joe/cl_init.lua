@@ -8,13 +8,49 @@ ENT.FaceFolder = "joe"
 
 local initialMenu = {
 	["Shop"] = {function(self) return self:ShowShopScreen() end},
-	["Talk"] = function(self) return self.Talked and {{face = "smile", text = "Joe.Talk.Short"}} or {{face = "smirk", text = "Joe.Talk.1"}, {face = "smile", text = "Joe.Talk.2"}} end
+	["Talk"] = function(self)
+		return self.Talked and {{face = "smile", text = "Joe.Talk.Short"}} or {{face = "smirk", text = "Joe.Talk.1"}, {face = "smile", text = "Joe.Talk.2"}}
+	end
 }
 
 local talkMenu = function()
 	local tbl = {}
 
-	tbl["WhoAreYou"] = {}
+	tbl["WhoAreYou"] = {
+		{face = "smirk", text = "Joe.WhoAreYou.1"},
+		{face = "smile", text = "Joe.WhoAreYou.2"},
+		{face = "grin", text = "Joe.WhoAreYou.3"},
+		{face = "lookside", text = "Joe.WhoAreYou.4"},
+		{face = "smile", text = "Joe.WhoAreYou.5"},
+		{face = "smirk", text = "Joe.WhoAreYou.6"}
+	}
+
+	tbl["Joe.HowsBusiness"] = {
+		{face = "neutral", text = "Joe.HowsBusiness.1"},
+		{face = "smile", text = "Joe.HowsBusiness.2"},
+		{face = "grin", text = "Joe.HowsBusiness.3"},
+		{face = "smile", text = "Joe.HowsBusiness.4"},
+		{face = "neutral", text = "Joe.HowsBusiness.5"},
+		{face = "lookside", text = "Joe.HowsBusiness.6"},
+		{face = "smirk", text = "Joe.HowsBusiness.7"},
+		{face = "neutral", text = "Joe.HowsBusiness.8"},
+		{face = "lookside", text = "Joe.HowsBusiness.9"},
+		{face = "annoyed", text = "Joe.HowsBusiness.10"},
+		{face = "lookside", text = "Joe.HowsBusiness.11"},
+		{face = "smirk", text = "Joe.HowsBusiness.12"},
+		{face = "grin", text = "Joe.HowsBusiness.13"},
+		{face = "smile", text = "Joe.HowsBusiness.14"}
+	}
+
+	if LocalPlayer():IsListenServerHost() and !IsMounted("treason") then
+		table.Add(tbl["Joe.HowsBusiness"], {
+			{face = "neutral", text = "Joe.HowsBusiness.NoTony.1"},
+			{face = "lookside", text = "Joe.HowsBusiness.NoTony.2"},
+			{face = "smirk", text = "Joe.HowsBusiness.NoTony.3"}
+		})
+	else
+		table.insert(tbl["Joe.HowsBusiness"], {face = "smirk", text = "Joe.HowsBusiness.Tony"})
+	end
 
 	tbl["Joe.Detective"] = {
 		function(self) return self:GetAnnoyed(ANNOY_HAT) and {face = "annoyed", text = "Joe.Detective.Shot.1"} or {face = "neutral", text = "Joe.Detective.1"} end
@@ -66,6 +102,9 @@ ENT.ChatLayout = {
 	-- Talk
 	["Joe.Talk.2"] = talkMenu,
 	["Joe.Talk.Short"] = talkMenu,
+	["Joe.WhoAreYou.6"] = talkMenu,
+	["Joe.HowsBusiness.Tony"] = talkMenu,
+	["Joe.HowsBusiness.NoTony.3"] = talkMenu,
 	["Joe.Detective.Shot.1"] = {
 		{face = "lookside", text = "Joe.Detective.Shot.2"},
 		{face = "neutral", text = "Joe.Detective.1"}
@@ -77,6 +116,7 @@ ENT.ChatLayout = {
 	["Joe.Detective.3"] = talkMenu,
 	["Joe.MemberCard.5"] = talkMenu,
 
+	-- Endings
 	["Joe.Final.1"] = {
 		{face = "neutral", text = "Joe.Final.2"},
 		{face = "smirk", text = "Joe.Final.3"},
@@ -89,6 +129,15 @@ ENT.ChatLayout = {
 		{face = "smirk", text = "Joe.Final.10"},
 		{face = "neutral", text = "Joe.Final.11"},
 		{face = "smile", text = "Joe.Final.12"},
+		function(self) return true end -- close chat
+	},
+
+	["Joe.Final.Good.1"] = {
+		{face = "smile", text = "Joe.Final.Good.2"},
+		{face = "smirk", text = "Joe.Final.Good.3"},
+		{face = "lookside", text = "Joe.Final.Good.4"},
+		{face = "neutral", text = "Joe.Final.Good.5"},
+		{face = "grin", text = "Joe.Final.Good.6"},
 		function(self) return true end -- close chat
 	},
 
@@ -196,6 +245,21 @@ ENT.ChatLayout = {
 		{face = "smirk", text = "Joe.Removed.2"},
 		{face = "smile", text = "Joe.Anyway"}
 	},
+	["Joe.Display.1"] = {
+		{face = "smirk", text = "Joe.Display.2"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Moved.1"] = {
+		{face = "neutral", text = "Joe.Moved.2"},
+		{face = "lookside", text = "Joe.Moved.3"},
+		{face = "smirk", text = "Joe.Moved.4"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Spec.1"] = {
+		{face = "lookside", text = "Joe.Spec.2"},
+		{face = "smirk", text = "Joe.Spec.3"},
+		function(self) return true end -- close chat
+	},
 
 	-- Forks
 	["Joe.CR.1"] = {
@@ -224,6 +288,14 @@ ENT.ChatHooks = {
 
 		return true
 	end,
+	["Joe.HowsBusiness.NoTony.3"] = function(self)
+		net.Start("TraitorJoe_SpawnDefib")
+		net.SendToServer()
+	end,
+	["Joe.Final.Good.1"] = function(self)
+		net.Start("TraitorJoe_SpawnTrash")
+		net.SendToServer()
+	end
 }
 
 ENT.AnnoyMessages = {
@@ -235,23 +307,27 @@ ENT.AnnoyMessages = {
 }
 
 function ENT:GetInitialChat()
+	if LocalPlayer():GetObserverMode() != OBS_MODE_NONE then
+		return {face = "annoyed", text = "Joe.Spec.1"}
+	end
+
 	local annoyed = self:AnnoyedCheck()
 	if annoyed then return annoyed end
 
-	if self.Met then
+	if TRAITORJOE.Joe.Met then
 		return {face = "smile", text = "Joe.WelcomeBack"}
 	end
 
 	if TTT2 or CR_VERSION then
 		if !TTT2 then
-			return {face = "grin", "Joe.CR.1"}
+			return {face = "grin", text = "Joe.CR.1"}
 		end
 
 		if !CR_VERSION then
-			return {face = "grin", "Joe.TTT2.1"}
+			return {face = "grin", text = "Joe.TTT2.1"}
 		end
 
-		-- you have both enabled, you muppet
+		-- you have both enabled you muppet
 		ErrorNoHaltWithStack("You have TTT2 and Custom Roles for TTT enabled at the same time! Please disable one of them.")
 		return {face = "annoyed", text = "Error.1"}
 	end

@@ -10,14 +10,17 @@ if !TRAITORJOE then
 				Done = {}
 			},
 			Members = {},
-			ItemsBought = SERVER and {} or 0
+			ItemsBought = SERVER and {} or 0,
+			Jail = {}
 		},
 		Tony = {
 			Annoyances = {
 				Queue = {},
 				Done = {}
 			}
-		}
+		},
+		BKU = {},
+		Base = {}
 	}
 end
 
@@ -351,40 +354,6 @@ if engine.ActiveGamemode() != "terrortown" then
 		end
 		vgui.Register("EquipSelect", PANEL, "DPanelSelect")
 
-		PANEL = {}
-		local facepadding = 6
-		local template = Material("mall_member/figardo/icon_template")
-		function PANEL:Paint(w, h)
-			surface.SetDrawColor(255, 255, 255, 255)
-			surface.SetMaterial(template)
-			surface.DrawTexturedRect(0, 0, w, h)
-
-			local facew = w * 0.625
-			local x, y = (w / 2) - (facew / 2) + facepadding, facepadding
-			self:PaintAt(x, y, facew - (facepadding * 2), h - (facepadding * 2))
-		end
-
-		function PANEL:PaintOver(w, h)
-			if self.Hat then
-				local facew = w * 0.625
-
-				surface.SetDrawColor(255, 255, 255, 255)
-				surface.SetMaterial(self.Hat)
-				surface.DrawTexturedRect((w / 2) - (facew / 2), -facepadding, w * 0.625, h * 0.425)
-			end
-		end
-
-		function PANEL:SetFace(folder, face)
-			if !folder or !face then
-				print("folder =", folder)
-				print("face =", face)
-				error("PANEL:SetFace called with nil parameters!")
-			end
-
-			self:SetImage("mall_member/figardo/faces/" .. folder .. "/" .. face)
-		end
-		vgui.Register("DTJFace", PANEL, "DImage")
-
 		-- Translation
 		LANG.Strings = {}
 		local cached_active
@@ -536,6 +505,41 @@ if CLIENT then
 	end
 
 	vgui.Register( "SimpleIconFakeAvatar", PANEL, "LayeredIcon" )
+
+	PANEL = {}
+	local facepadding = 6
+	local template = Material("mall_member/figardo/icon_template")
+	function PANEL:Paint(w, h)
+		surface.SetDrawColor(255, 255, 255, 255)
+		surface.SetMaterial(template)
+		surface.DrawTexturedRect(0, 0, w, h)
+
+		local facew = w * 0.625
+		local x, y = (w / 2) - (facew / 2) + facepadding, facepadding
+		self:PaintAt(x, y, facew - (facepadding * 2), h - (facepadding * 2))
+	end
+
+	function PANEL:PaintOver(w, h)
+		if self.Hat then
+			local facew = self.HatWidthOverride or 0.625
+			facew = facew * w
+
+			surface.SetDrawColor(255, 255, 255, 255)
+			surface.SetMaterial(self.Hat)
+			surface.DrawTexturedRect((w / 2) - (facew / 2), -facepadding, facew, h * 0.425)
+		end
+	end
+
+	function PANEL:SetFace(folder, face)
+		if !folder or !face then
+			print("folder =", folder)
+			print("face =", face)
+			error("PANEL:SetFace called with nil parameters!")
+		end
+
+		self:SetImage("mall_member/figardo/faces/" .. folder .. "/" .. face)
+	end
+	vgui.Register("DTJFace", PANEL, "DImage")
 end
 
 -- Annoyances
@@ -551,27 +555,27 @@ end
 -- Shared
 ANNOY_HAT = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "annoyed", text = "Joe.HatShot.1"},
-	["tj_npc_tony"] = {face = "annoyed", text = "Tony.HatShot.1"}
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.HatShot.1"}
 })
 ANNOY_PHYSGUN = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "annoyed", text = "Joe.Physgun.1"},
-	["tj_npc_tony"] = {face = "annoyed", text = "Tony.Physgun.1"}
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.Physgun.1"}
 })
 ANNOY_RADIO = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "annoyed", text = "Joe.RadioShot.1"},
-	["tj_npc_tony"] = {face = "annoyed", text = "Tony.RadioShot.1"}
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.RadioShot.1"}
 })
 ANNOY_DAMAGE = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "neutral", text = "Joe.Shot.1"},
-	["tj_npc_tony"] = {face = "annoyed", text = "Tony.Shot.1"}
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.Shot.1"}
 })
 ANNOY_TOOLGUN = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "annoyed", text = "Joe.Toolgun.1"},
-	["tj_npc_tony"] = {face = "annoyed", text = "Tony.Toolgun.1"}
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.Toolgun.1"}
 })
 ANNOY_FIRE = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "lookside", text = "Joe.Fire.1"},
-	["tj_npc_tony"] = {face = "annoyed", text = "Tony.Fire.1"}
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.Fire.1"}
 })
 
 -- Joe
@@ -583,9 +587,11 @@ ANNOY_REMOVED = RegisterAnnoyance({
 		return self:GetAnnoyanceCount() > 1 and {face = "grin", text = "Joe.Removed.Annoy"} or {face = "smile", text = "Joe.Removed.1"}
 	end
 })
+ANNOY_DISPLAY = RegisterAnnoyance({["tj_npc_joe"] = {face = "neutral", text = "Joe.Display.1"}})
+ANNOY_MOVED = RegisterAnnoyance({["tj_npc_joe"] = {face = "smile", text = "Joe.Moved.1"}})
 ANNOY_FINAL = RegisterAnnoyance({
 	["tj_npc_joe"] = function(self)
-		return self:GetAnnoyanceCount() > 1 and {face = "annoyed", text = "Joe.Final.1"} or {face = "smile", text = "Joe.Final.Good.1"}
+		return self:GetAnnoyanceCount() > 1 and {face = "annoyed", text = "Joe.Final.1"} or {face = "smirk", text = "Joe.Final.Good.1"}
 	end
 })
 
@@ -758,21 +764,38 @@ local function ShowSearchScreen()
 	dframe:MakePopup()
 end
 
-local phoneOverlay
+local tjOverlay
 local useEnts = {
 	["tj_shitleton"] = ShowSearchScreen,
 	["tj_shitphone"] = function()
-		if IsValid(phoneOverlay) then
+		if IsValid(tjOverlay) then
 			return
 		end
 
-		phoneOverlay = vgui.Create("DImage")
-		phoneOverlay:SetSize(ScrW(), ScrH())
-		phoneOverlay:SetImage("mall_member/figardo/phonemsg")
+		tjOverlay = vgui.Create("DImage")
+		tjOverlay:SetSize(ScrW(), ScrH())
+		tjOverlay:SetImage("mall_member/figardo/phonemsg")
 
 		hook.Add("PlayerBindPress", "TraitorJoeClosePhoneMsg", function(ply, bind, pressed)
-			if IsValid(phoneOverlay) then
-				phoneOverlay:Remove()
+			if IsValid(tjOverlay) then
+				tjOverlay:Remove()
+			end
+
+			hook.Remove("PlayerBindPress", "TraitorJoeClosePhoneMsg")
+		end)
+	end,
+	["tj_final_computer"] = function()
+		if IsValid(tjOverlay) then
+			return
+		end
+
+		tjOverlay = vgui.Create("DImage")
+		tjOverlay:SetSize(ScrW(), ScrH())
+		tjOverlay:SetImage("mall_member/figardo/phonemsg")
+
+		hook.Add("PlayerBindPress", "TraitorJoeClosePhoneMsg", function(ply, bind, pressed)
+			if IsValid(tjOverlay) then
+				tjOverlay:Remove()
 			end
 
 			hook.Remove("PlayerBindPress", "TraitorJoeClosePhoneMsg")
@@ -803,7 +826,7 @@ if SERVER then
 		ent:Annoy(annoyance, ply)
 	end
 
-	function TRAITORJOE:OnEnterOrLeave(left)
+	function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 		if left then
 			if IsValid(self.Joe.Entity) then
 				if !IsValid(self.Joe.Entity.hat) then
@@ -818,21 +841,129 @@ if SERVER then
 					npc:SetAngles(ent:GetAngles())
 					npc:Spawn()
 
-					npc:Annoy(ANNOY_REMOVED)
+					if !noAnnoy then
+						npc:Annoy(ANNOY_REMOVED)
+					end
 
 					self.Joe.Entity = npc
 
 					break
 				end
 			end
+
+			if IsMounted("treason") and !IsValid(self.Tony.Entity) then
+				for _, ent in ents.Iterator() do
+					if ent:GetName() != "tj_traitortony_spawn" then continue end
+
+					local npc = ents.Create("tj_npc_tony")
+					npc:SetPos(ent:GetPos())
+					npc:SetAngles(ent:GetAngles())
+					npc:Spawn()
+
+					self.Tony.Entity = npc
+
+					break
+				end
+			end
+
+			if IsValid(self.Radio) then
+				net.Start("TraitorJoe_Radio")
+					net.WriteBool(false)
+				net.Broadcast()
+			else
+				for _, ent in ents.Iterator() do
+					if ent:GetName() != "tj_radio_spawn" then continue end
+
+					local radio = ents.Create("tj_radio")
+					radio:SetPos(ent:GetPos())
+					radio:SetAngles(ent:GetAngles())
+					radio:Spawn()
+
+					self.Radio = radio
+
+					break
+				end
+			end
+		else
+			net.Start("TraitorJoe_Radio")
+				net.WriteBool(true)
+			net.Broadcast()
 		end
 	end
+
+	local hatModel = Model("models/mall_member/figardo/vending_hat.mdl")
+	hook.Add("PostCleanupMap", "TraitorJoesCleanupPrevention", function()
+		TRAITORJOE:OnEnterOrLeave(true, engine.ActiveGamemode() == "terrortown")
+
+		for _, ent in ents.Iterator() do
+			local name = ent:GetName()
+			if useEnts[name] then
+				ent:SetNW2String("gmall_figardo", name)
+				continue
+			end
+
+			if ent:GetName() == "tj_hat_spawn" then
+				local hat = ents.Create("tj_hat")
+				if !IsValid(hat) then return end
+
+				hat:SetModel(hatModel)
+				hat.ShouldBoneMerge = false
+
+				hat:SetPos(ent:GetPos())
+				hat:SetAngles(ent:GetAngles())
+
+				hat:Spawn()
+
+				hat:SetBeingWorn(false)
+
+				hat:SetMoveType(MOVETYPE_VPHYSICS)
+				local phys = hat:GetPhysicsObject()
+				if IsValid(phys) then
+					phys:Wake()
+				end
+			end
+		end
+	end)
 
 	hook.Add("InitPostEntity", "TraitorJoesEntityInitialization", function()
 		for _, ent in ents.Iterator() do
 			local name = ent:GetName()
 			if useEnts[name] then
 				ent:SetNW2String("gmall_figardo", name) -- fucking stupid
+				continue
+			end
+
+			if name == "tj_hat_spawn" then
+				local hat = ents.Create("tj_hat")
+				if !IsValid(hat) then return end
+
+				hat:SetModel(hatModel)
+				hat.ShouldBoneMerge = false
+
+				hat:SetPos(ent:GetPos())
+				hat:SetAngles(ent:GetAngles())
+
+				hat:Spawn()
+
+				hat:SetBeingWorn(false)
+
+				hat:SetMoveType(MOVETYPE_VPHYSICS)
+				local phys = hat:GetPhysicsObject()
+				if IsValid(phys) then
+					phys:Wake()
+				end
+
+				continue
+			end
+
+			if name == "tj_radio_spawn" then
+				local radio = ents.Create("tj_radio")
+				radio:SetPos(ent:GetPos())
+				radio:SetAngles(ent:GetAngles())
+				radio:Spawn()
+
+				TRAITORJOE.Radio = radio
+
 				continue
 			end
 
@@ -844,16 +975,25 @@ if SERVER then
 
 				TRAITORJOE.Joe.Entity = npc
 
+				-- this is a terrible approach! but i don't care :)
+				TRAITORJOE.Joe.Jail.Origin = ent:GetPos()
+				TRAITORJOE.Joe.Jail.Min = ent:GetPos() + Vector(-218, 126, 0)
+				TRAITORJOE.Joe.Jail.Max = ent:GetPos() + Vector(218, -18, 120)
+
 				continue
 			end
 
-			if name == "tj_traitortony_spawn" and IsMounted("treason") then
-				local npc = ents.Create("tj_npc_tony")
-				npc:SetPos(ent:GetPos())
-				npc:SetAngles(ent:GetAngles())
-				npc:Spawn()
+			if name == "tj_traitortony_spawn" then
+				TRAITORJOE.DefibSpawn = ent
 
-				TRAITORJOE.Tony = npc
+				if IsMounted("treason") then
+					local npc = ents.Create("tj_npc_tony")
+					npc:SetPos(ent:GetPos())
+					npc:SetAngles(ent:GetAngles())
+					npc:Spawn()
+
+					TRAITORJOE.Tony.Entity = npc
+				end
 			end
 		end
 	end)
@@ -890,6 +1030,52 @@ if SERVER then
 
 	net.Receive("TraitorJoe_ApplyForMembership", function(_, ply)
 		TRAITORJOE.Joe.Members[ply:SteamID64()] = true
+	end)
+
+	net.Receive("TraitorJoe_SpawnDefib", function(_, ply)
+		if ply:HasWeapon("weapon_ttt_tj_defib") then return end
+
+		if IsMounted("treason") then
+			error("Player " .. ply:Nick() .. " tried to rudely intrude upon Tony's personal space.")
+		end
+
+		for _, ent in ents.Iterator() do
+			if ent:GetClass() != "weapon_ttt_tj_defib" then continue end
+
+			if !IsValid(ent:GetOwner()) then return end -- if there's already a defib on the floor then don't bother spawning another
+		end
+
+		local spawn = TRAITORJOE.DefibSpawn
+		local ent = ents.Create("weapon_ttt_tj_defib")
+		ent:SetPos(spawn:GetPos())
+		ent:SetAngles(spawn:GetAngles())
+		ent:Spawn()
+	end)
+
+	net.Receive("TraitorJoe_TonyDefib", function(_, ply)
+		if !IsMounted("treason") then
+			error("Player " .. ply:Nick() .. " tried to abuse Tony's good will when Treason isn't mounted.")
+		end
+
+		if ply:HasWeapon("weapon_ttt_tj_defib") then return end
+
+		ply:Give("weapon_ttt_tj_defib")
+	end)
+
+	net.Receive("TraitorJoe_BKUCredits", function(_, ply)
+		local bku
+		for _, ent in ents.Iterator() do
+			if ent:GetClass() == "tj_npc_bku" then
+				bku = ent
+				break
+			end
+		end
+
+		if !IsValid(bku) then return end
+
+		if ply:GetCredits() > 0 then return end
+
+		ply:AddCredits(5)
 	end)
 else
 	local function bitsRequired(num)
@@ -984,6 +1170,19 @@ else
 		end,
 		["tj_shitphone"] = function()
 			local text = "Press E to check phone(?)"
+
+			local font = "TargetIDSmall"
+			surface.SetFont( font )
+
+			local w = surface.GetTextSize(text)
+			local x_orig = ScrW() / 2.0
+			local x = x_orig - w / 2
+			local y = (ScrH() / 2.0) + 30
+			draw.SimpleText( text, font, x + 1, y + 1, COLOR_BLACK )
+			draw.SimpleText( text, font, x, y, COLOR_LGRAY )
+		end,
+		["tj_final_computer"] = function()
+			local text = "Press E to use computer"
 
 			local font = "TargetIDSmall"
 			surface.SetFont( font )
