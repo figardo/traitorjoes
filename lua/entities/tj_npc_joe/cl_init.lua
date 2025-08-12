@@ -260,6 +260,12 @@ ENT.ChatLayout = {
 		{face = "smirk", text = "Joe.Spec.3"},
 		function(self) return true end -- close chat
 	},
+	["Joe.Bones.1"] = {
+		{face = "angry", text = "Joe.Bones.2"},
+		{face = "smirk", text = "Joe.Bones.3"},
+		{face = "grin", text = "Joe.Bones.4"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
 
 	-- Forks
 	["Joe.CR.1"] = {

@@ -58,6 +58,16 @@ function ENT:Think()
 		self.FireCheck = false
 	end
 
+	if self:HasBoneManipulations() then
+		if !self.BoneCheck then
+			self:Annoy(ANNOY_BONES)
+
+			self.BoneCheck = true
+		end
+	else
+		self.BoneCheck = false
+	end
+
 	-- Make sure the animation is smooth
 	self:NextThink(CurTime())
 	return true

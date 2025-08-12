@@ -577,6 +577,10 @@ ANNOY_FIRE = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "lookside", text = "Joe.Fire.1"},
 	["tj_npc_tony"] = {face = "neutral", text = "Tony.Fire.1"}
 })
+ANNOY_BONES = RegisterAnnoyance({
+	["tj_npc_joe"] = {face = "annoyed", text = "Joe.Bones.1"},
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.Bones.1"}
+})
 
 -- Joe
 ANNOY_NOCLIP = RegisterAnnoyance({["tj_npc_joe"] = {face = "annoyed", text = "Joe.ReadTheSign"}})
@@ -789,17 +793,14 @@ local useEnts = {
 			return
 		end
 
-		tjOverlay = vgui.Create("DImage")
-		tjOverlay:SetSize(ScrW(), ScrH())
-		tjOverlay:SetImage("mall_member/figardo/phonemsg")
+		tjOverlay = vgui.Create("DFrame")
+		tjOverlay:SetSize(math.min(ScrW(), ScrH() * (4 / 3)), ScrH())
+		tjOverlay.Paint = nil
 
-		hook.Add("PlayerBindPress", "TraitorJoeClosePhoneMsg", function(ply, bind, pressed)
-			if IsValid(tjOverlay) then
-				tjOverlay:Remove()
-			end
-
-			hook.Remove("PlayerBindPress", "TraitorJoeClosePhoneMsg")
-		end)
+		tjOverlay:ShowCloseButton(true)
+		tjOverlay:SetDeleteOnClose(true)
+		tjOverlay:MakePopup()
+		tjOverlay:SetDraggable(false)
 	end
 }
 
@@ -826,20 +827,57 @@ if SERVER then
 		ent:Annoy(annoyance, ply)
 	end
 
+	local function SpawnOnTarget(class, target, noSpawn)
+		local ent = ents.Create(class)
+		ent:SetPos(target:GetPos())
+		ent:SetAngles(target:GetAngles())
+
+		if !noSpawn then
+			ent:Spawn()
+		end
+
+		return ent
+	end
+
+	local vec0 = Vector(0, 0, 0)
+	local vec1 = Vector(1, 1, 1)
+	local angle0 = Angle(0, 0, 0)
+	local function ResetBoneManips(ent)
+		for i = 0, ent:GetBoneCount() - 1 do
+			if ent:GetManipulateBoneAngles(i) != angle0 then
+				ent:ManipulateBoneAngles(i, angle0)
+			end
+
+			if ent:GetManipulateBoneJiggle(i) != 0 then
+				ent:ManipulateBoneJiggle(i, 0)
+			end
+
+			if ent:GetManipulateBonePosition(i) != vec0 then
+				ent:ManipulateBonePosition(i, vec0)
+			end
+
+			if ent:GetManipulateBoneScale(i) != vec1 then
+				ent:ManipulateBoneScale(i, vec1)
+			end
+		end
+	end
+
 	function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 		if left then
-			if IsValid(self.Joe.Entity) then
-				if !IsValid(self.Joe.Entity.hat) then
-					self.Joe.Entity:SpawnHat()
+			local joe = self.Joe.Entity
+			if IsValid(joe) then
+				if !IsValid(joe.hat) then
+					joe:SpawnHat()
+				end
+
+				if joe:HasBoneManipulations() then
+					ResetBoneManips(joe)
 				end
 			else
 				for _, ent in ents.Iterator() do
 					if ent:GetName() != "tj_traitorjoe_spawn" then continue end
 
-					local npc = ents.Create("tj_npc_joe")
-					npc:SetPos(ent:GetPos())
-					npc:SetAngles(ent:GetAngles())
-					npc:Spawn()
+					local npc = SpawnOnTarget("tj_npc_joe", ent)
 
 					if !noAnnoy then
 						npc:Annoy(ANNOY_REMOVED)
@@ -855,10 +893,7 @@ if SERVER then
 				for _, ent in ents.Iterator() do
 					if ent:GetName() != "tj_traitortony_spawn" then continue end
 
-					local npc = ents.Create("tj_npc_tony")
-					npc:SetPos(ent:GetPos())
-					npc:SetAngles(ent:GetAngles())
-					npc:Spawn()
+					local npc = SpawnOnTarget("tj_npc_tony", ent)
 
 					self.Tony.Entity = npc
 
@@ -874,10 +909,7 @@ if SERVER then
 				for _, ent in ents.Iterator() do
 					if ent:GetName() != "tj_radio_spawn" then continue end
 
-					local radio = ents.Create("tj_radio")
-					radio:SetPos(ent:GetPos())
-					radio:SetAngles(ent:GetAngles())
-					radio:Spawn()
+					local radio = SpawnOnTarget("tj_radio", ent)
 
 					self.Radio = radio
 
@@ -903,14 +935,10 @@ if SERVER then
 			end
 
 			if ent:GetName() == "tj_hat_spawn" then
-				local hat = ents.Create("tj_hat")
-				if !IsValid(hat) then return end
+				local hat = SpawnOnTarget("tj_hat", ent, true)
 
 				hat:SetModel(hatModel)
 				hat.ShouldBoneMerge = false
-
-				hat:SetPos(ent:GetPos())
-				hat:SetAngles(ent:GetAngles())
 
 				hat:Spawn()
 
@@ -934,14 +962,10 @@ if SERVER then
 			end
 
 			if name == "tj_hat_spawn" then
-				local hat = ents.Create("tj_hat")
-				if !IsValid(hat) then return end
+				local hat = SpawnOnTarget("tj_hat", ent, true)
 
 				hat:SetModel(hatModel)
 				hat.ShouldBoneMerge = false
-
-				hat:SetPos(ent:GetPos())
-				hat:SetAngles(ent:GetAngles())
 
 				hat:Spawn()
 
@@ -957,10 +981,7 @@ if SERVER then
 			end
 
 			if name == "tj_radio_spawn" then
-				local radio = ents.Create("tj_radio")
-				radio:SetPos(ent:GetPos())
-				radio:SetAngles(ent:GetAngles())
-				radio:Spawn()
+				local radio = SpawnOnTarget("tj_radio", ent)
 
 				TRAITORJOE.Radio = radio
 
@@ -968,10 +989,7 @@ if SERVER then
 			end
 
 			if name == "tj_traitorjoe_spawn" then
-				local npc = ents.Create("tj_npc_joe")
-				npc:SetPos(ent:GetPos())
-				npc:SetAngles(ent:GetAngles())
-				npc:Spawn()
+				local npc = SpawnOnTarget("tj_npc_joe", ent)
 
 				TRAITORJOE.Joe.Entity = npc
 
@@ -987,10 +1005,7 @@ if SERVER then
 				TRAITORJOE.DefibSpawn = ent
 
 				if IsMounted("treason") then
-					local npc = ents.Create("tj_npc_tony")
-					npc:SetPos(ent:GetPos())
-					npc:SetAngles(ent:GetAngles())
-					npc:Spawn()
+					local npc = SpawnOnTarget("tj_npc_tony", ent)
 
 					TRAITORJOE.Tony.Entity = npc
 				end
@@ -1045,11 +1060,7 @@ if SERVER then
 			if !IsValid(ent:GetOwner()) then return end -- if there's already a defib on the floor then don't bother spawning another
 		end
 
-		local spawn = TRAITORJOE.DefibSpawn
-		local ent = ents.Create("weapon_ttt_tj_defib")
-		ent:SetPos(spawn:GetPos())
-		ent:SetAngles(spawn:GetAngles())
-		ent:Spawn()
+		SpawnOnTarget("weapon_ttt_tj_defib", TRAITORJOE.DefibSpawn)
 	end)
 
 	net.Receive("TraitorJoe_TonyDefib", function(_, ply)

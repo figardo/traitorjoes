@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8870"
-	"mapversion" "292"
+	"mapversion" "293"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -89,7 +89,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "292"
+	"mapversion" "293"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -26604,7 +26604,7 @@ entity
 	"classname" "point_worldtext"
 	"angles" "-0 90 0"
 	"color" "255 255 255 255"
-	"message" "Song radio is temporary"
+	"message" "Radio song is temporary"
 	"orientation" "0"
 	"rainbow" "0"
 	"textsize" "3"
