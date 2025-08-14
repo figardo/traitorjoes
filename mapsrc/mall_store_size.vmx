@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8870"
-	"mapversion" "293"
+	"mapversion" "296"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -89,7 +89,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "293"
+	"mapversion" "296"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -20189,7 +20189,7 @@ entity
 	"maxdxlevel" "0"
 	"MinAnimTime" "5"
 	"mindxlevel" "0"
-	"model" "models/props/cs_office/computer.mdl"
+	"model" "models/mall_member/figardo/computer.mdl"
 	"modelscale" "1.0"
 	"PerformanceMode" "0"
 	"pressuredelay" "0"
@@ -25929,7 +25929,7 @@ entity
 		}
 		side
 		{
-			"id" "0"
+			"id" "25714"
 			"plane" "(-43 288 -484) (-43 287 -484) (-43 287 -468)"
 			vertices_plus
 			{
@@ -26067,7 +26067,7 @@ entity
 		}
 		side
 		{
-			"id" "0"
+			"id" "25715"
 			"plane" "(95 287 -520) (95 288 -520) (95 288 -484)"
 			vertices_plus
 			{
@@ -26225,7 +26225,7 @@ entity
 		}
 		side
 		{
-			"id" "0"
+			"id" "25716"
 			"plane" "(94 287 -468) (94 288 -468) (95 288 -484)"
 			vertices_plus
 			{
@@ -26617,6 +26617,24 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 -11268]"
+	}
+}
+entity
+{
+	"id" "23206"
+	"classname" "ttt_map_settings"
+	"angles" "0 0 0"
+	"cbar_buttons" "1"
+	"cbar_doors" "1"
+	"cbar_other" "1"
+	"origin" "29 -166 -546"
+	"propspec_allow_named" "0"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
 	}
 }
 cameras

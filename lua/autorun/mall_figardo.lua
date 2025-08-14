@@ -768,15 +768,33 @@ local function ShowSearchScreen()
 	dframe:MakePopup()
 end
 
-local tjOverlay
+local emailUnread = Material("icon16/email.png")
+local emailRead = Material("icon16/email_open.png")
+local emailData = {
+	{
+		inbox = "Sent Items",
+		icon = emailUnread,
+		emails = {
+			{subject = "Radio Station", text = "Dear BKU,\n\nLOL!\n\nRegards,\nTraitor Joe"}
+		}
+	}
+}
+
+hook.Add("OnPauseMenuShow", "TraitorJoeCloseComputer", function(ply, bind, pressed)
+	if IsValid(TRAITORJOE.Overlay) then
+		TRAITORJOE.Overlay:Remove()
+		return false
+	end
+end)
+
 local useEnts = {
 	["tj_shitleton"] = ShowSearchScreen,
 	["tj_shitphone"] = function()
-		if IsValid(tjOverlay) then
+		if IsValid(TRAITORJOE.Overlay) then
 			return
 		end
 
-		tjOverlay = vgui.Create("DImage")
+		local tjOverlay = vgui.Create("DImage")
 		tjOverlay:SetSize(ScrW(), ScrH())
 		tjOverlay:SetImage("mall_member/figardo/phonemsg")
 
@@ -789,18 +807,94 @@ local useEnts = {
 		end)
 	end,
 	["tj_final_computer"] = function()
-		if IsValid(tjOverlay) then
+		if IsValid(TRAITORJOE.Overlay) then
 			return
 		end
 
-		tjOverlay = vgui.Create("DFrame")
-		tjOverlay:SetSize(math.min(ScrW(), ScrH() * (4 / 3)), ScrH())
+		local w, h = math.min(ScrW(), ScrH() * (4 / 3)), ScrH()
+
+		local tjOverlay = vgui.Create("DFrame")
+		tjOverlay:SetSize(w, h)
+		tjOverlay:SetX((ScrW() / 2) - (w / 2))
 		tjOverlay.Paint = nil
 
+		tjOverlay:SetDraggable(false)
+		tjOverlay:SetVisible(true)
 		tjOverlay:ShowCloseButton(true)
 		tjOverlay:SetDeleteOnClose(true)
+
+		local desktopBackground = vgui.Create("DImage", tjOverlay)
+		desktopBackground:SetSize(w, h)
+		desktopBackground:SetImage("mall_member/figardo/desktop")
+		desktopBackground:SetMouseInputEnabled(true)
+
+		local ew, eh = w / 2, h * 0.45
+
+		local outlook = vgui.Create("DPanel", desktopBackground)
+		outlook:SetSize(ew, eh)
+		outlook:SetPos(w * 0.37, h * 0.3)
+
+		local inboxes = vgui.Create("DPanel", outlook)
+		inboxes:SetSize(ew / 5, eh * 0.9)
+
+		for i = 1, #emailData do
+			local data = emailData[i]
+			local text = data.inbox
+			local icon = data.icon
+			local emails = data.emails
+
+			local inboxButton = vgui.Create("DLabel", inboxes)
+			inboxButton:SetSize(inboxes:GetWide(), 35)
+
+			inboxButton.Paint = function(s, sw, sh)
+				surface.SetDrawColor(210, 210, 210)
+				surface.DrawRect(5, 5, sw - 5, sh - 5)
+
+				surface.SetDrawColor(255, 255, 255)
+				surface.SetMaterial(icon)
+				surface.DrawTexturedRect(10, 10, 20, 20)
+
+				surface.SetTextColor(40, 40, 40)
+				surface.SetFont("TargetIDSmall")
+				surface.SetTextPos(35, 10)
+				surface.DrawText(text .. " (" .. #emails .. ")")
+			end
+
+			local emailspnl = vgui.Create("DPanel", outlook)
+			emailspnl:SetSize(ew / 5, eh)
+			emailspnl:MoveRightOf(inboxes, 5)
+
+			for j = 1, #emails do
+				local edata = emails[j]
+				local etext = edata.subject
+
+				local emailButton = vgui.Create("DButton", emailspnl)
+				emailButton:SetSize(emailspnl:GetWide(), 35)
+				emailButton:SetText("")
+
+				emailButton.Paint = function(s, sw, sh)
+					surface.SetDrawColor(210, 210, 210)
+					surface.DrawRect(5, 5, sw - 5, sh - 5)
+
+					surface.SetDrawColor(255, 255, 255)
+					surface.SetMaterial(edata.read and emailRead or emailUnread)
+					surface.DrawTexturedRect(10, 10, 20, 20)
+
+					surface.SetTextColor(40, 40, 40)
+					surface.SetFont("TargetIDSmall")
+					surface.SetTextPos(35, 10)
+					surface.DrawText(etext)
+				end
+				emailButton.DoClick = function() edata.read = true end
+			end
+
+			if i != 1 then
+				emailspnl:Hide()
+			end
+		end
+
 		tjOverlay:MakePopup()
-		tjOverlay:SetDraggable(false)
+		TRAITORJOE.Overlay = tjOverlay
 	end
 }
 
