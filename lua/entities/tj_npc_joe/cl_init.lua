@@ -266,6 +266,15 @@ ENT.ChatLayout = {
 		{face = "grin", text = "Joe.Bones.4"},
 		{face = "smile", text = "Joe.Anyway"}
 	},
+	["Joe.Spray.1"] = {
+		{face = "smirk", text = "Joe.Spray.2"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Spawn.1"] = {
+		{face = "smirk", text = "Joe.Spawn.2"},
+		{face = "annoyed", text = "Joe.Spawn.3"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
 
 	-- Forks
 	["Joe.CR.1"] = {

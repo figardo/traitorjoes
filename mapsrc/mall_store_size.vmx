@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8870"
-	"mapversion" "296"
+	"mapversion" "298"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -89,7 +89,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "296"
+	"mapversion" "298"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -25180,27 +25180,6 @@ entity
 }
 entity
 {
-	"id" "21440"
-	"classname" "point_worldtext"
-	"angles" "-0 0 0"
-	"color" "255 255 255 255"
-	"message" "WIP Pretend you found something cool in here :)"
-	"orientation" "0"
-	"rainbow" "0"
-	"textsize" "3"
-	"textspacingX" "0"
-	"textspacingY" "0"
-	"origin" "179 403 -488"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 -11268]"
-	}
-}
-entity
-{
 	"id" "21456"
 	"classname" "func_physbox"
 	"damagetoenablemotion" "0"
@@ -26624,9 +26603,9 @@ entity
 	"id" "23206"
 	"classname" "ttt_map_settings"
 	"angles" "0 0 0"
-	"cbar_buttons" "1"
-	"cbar_doors" "1"
-	"cbar_other" "1"
+	"cbar_buttons" "0"
+	"cbar_doors" "0"
+	"cbar_other" "0"
 	"origin" "29 -166 -546"
 	"propspec_allow_named" "0"
 	editor

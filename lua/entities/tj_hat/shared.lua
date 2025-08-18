@@ -1,9 +1,9 @@
-if game.GetMap() != "mall_store_size" then return end
-
 AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
+
+if game.GetMap() != "mall_store_size" then return end
 
 ENT.ModelOffsets = {
 	["models/player/mafia_hat_medium.mdl"] = {pos = Vector(6.5, 0, 0), ang = Angle(0, 270, 270)},
