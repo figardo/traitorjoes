@@ -20,7 +20,8 @@ if !TRAITORJOE then
 			}
 		},
 		BKU = {},
-		Base = {}
+		Base = {},
+		Bounds = {}
 	}
 end
 
@@ -413,10 +414,6 @@ if engine.ActiveGamemode() != "terrortown" then
 			chat.AddText(LANG.GetTranslation(net.ReadString()))
 		end)
 
-		net.Receive("TraitorJoe_BuyItem", function()
-			TRAITORJOE.Joe.ItemsBought = net.ReadUInt(3)
-		end)
-
 		hook.Add("HUDDrawTargetID", "TraitorJoesDisguiserFunction", function()
 			local tr = util.GetPlayerTrace(LocalPlayer())
 			local trace = util.TraceLine(tr)
@@ -480,68 +477,6 @@ if engine.ActiveGamemode() != "terrortown" then
 	end
 end
 
-if CLIENT then
-	local PANEL = {}
-
-	function PANEL:Init()
-		self.imgAvatar = vgui.Create( "DImage", self )
-		self.imgAvatar:SetMouseInputEnabled( false )
-		self.imgAvatar:SetKeyboardInputEnabled( false )
-		self.imgAvatar.PerformLayout = function(s) s:Center() end
-
-		self:SetAvatarSize(32)
-
-		self:AddLayer(self.imgAvatar)
-
-		--return self.BaseClass.Init(self)
-	end
-
-	function PANEL:SetAvatarSize(s)
-		self.imgAvatar:SetSize(s, s)
-	end
-
-	function PANEL:SetAvatar(icon)
-		self.imgAvatar:SetImage(icon)
-	end
-
-	vgui.Register( "SimpleIconFakeAvatar", PANEL, "LayeredIcon" )
-
-	PANEL = {}
-	local facepadding = 6
-	local template = Material("mall_member/figardo/icon_template")
-	function PANEL:Paint(w, h)
-		surface.SetDrawColor(255, 255, 255, 255)
-		surface.SetMaterial(template)
-		surface.DrawTexturedRect(0, 0, w, h)
-
-		local facew = w * 0.625
-		local x, y = (w / 2) - (facew / 2) + facepadding, facepadding
-		self:PaintAt(x, y, facew - (facepadding * 2), h - (facepadding * 2))
-	end
-
-	function PANEL:PaintOver(w, h)
-		if self.Hat then
-			local facew = self.HatWidthOverride or 0.625
-			facew = facew * w
-
-			surface.SetDrawColor(255, 255, 255, 255)
-			surface.SetMaterial(self.Hat)
-			surface.DrawTexturedRect((w / 2) - (facew / 2), -facepadding, facew, h * 0.425)
-		end
-	end
-
-	function PANEL:SetFace(folder, face)
-		if !folder or !face then
-			print("folder =", folder)
-			print("face =", face)
-			error("PANEL:SetFace called with nil parameters!")
-		end
-
-		self:SetImage("mall_member/figardo/faces/" .. folder .. "/" .. face)
-	end
-	vgui.Register("DTJFace", PANEL, "DImage")
-end
-
 -- Annoyances
 
 ANNOY_MAX = -1
@@ -577,6 +512,10 @@ ANNOY_FIRE = RegisterAnnoyance({
 	["tj_npc_joe"] = {face = "lookside", text = "Joe.Fire.1"},
 	["tj_npc_tony"] = {face = "neutral", text = "Tony.Fire.1"}
 })
+ANNOY_BONES = RegisterAnnoyance({
+	["tj_npc_joe"] = {face = "annoyed", text = "Joe.Bones.1"},
+	["tj_npc_tony"] = {face = "neutral", text = "Tony.Bones.1"}
+})
 
 -- Joe
 ANNOY_NOCLIP = RegisterAnnoyance({["tj_npc_joe"] = {face = "annoyed", text = "Joe.ReadTheSign"}})
@@ -589,6 +528,8 @@ ANNOY_REMOVED = RegisterAnnoyance({
 })
 ANNOY_DISPLAY = RegisterAnnoyance({["tj_npc_joe"] = {face = "neutral", text = "Joe.Display.1"}})
 ANNOY_MOVED = RegisterAnnoyance({["tj_npc_joe"] = {face = "smile", text = "Joe.Moved.1"}})
+ANNOY_SPRAY = RegisterAnnoyance({["tj_npc_joe"] = {face = "annoyed", text = "Joe.Spray.1"}})
+ANNOY_SPAWN = RegisterAnnoyance({["tj_npc_joe"] = {face = "neutral", text = "Joe.Spawn.1"}})
 ANNOY_FINAL = RegisterAnnoyance({
 	["tj_npc_joe"] = function(self)
 		return self:GetAnnoyanceCount() > 1 and {face = "annoyed", text = "Joe.Final.1"} or {face = "smirk", text = "Joe.Final.Good.1"}
@@ -764,15 +705,408 @@ local function ShowSearchScreen()
 	dframe:MakePopup()
 end
 
-local tjOverlay
+-- Email/Phone
+
+local grad = Material("gui/gradient_up")
+
+local emailUnread = Material("icon16/email.png")
+local emailSent = Material("icon16/email_go.png")
+local emailRead = Material("icon16/email_open.png")
+local emailDraft = Material("icon16/email_edit.png")
+local emailSpam = Material("icon16/email_error.png")
+local emailBox = Material("icon16/box.png")
+
+local emailSound = Material("icon16/sound_none.png")
+local emailSoundPlaying = Material("icon16/sound.png")
+
+local emailData = {
+	{
+		inbox = "Inbox",
+		icon = emailUnread,
+		emails = {
+			{name = "FunnyStarRunner", email = "funnystarrunner@gmall.net", subject = "#TraitorJoes.GMall.Subject", text = "TraitorJoes.GMall.Text"},
+			{name = "The Shareholders", email = "theshareholders@traitorjoes.nl", subject = "#TraitorJoes.TradeSecrets.Subject", text = "TraitorJoes.TradeSecrets.Text"}
+		}
+	},
+	{
+		inbox = "Outbox",
+		icon = emailRead,
+		send = true,
+		emails = {
+		}
+	},
+	{
+		inbox = "Drafts",
+		icon = emailDraft,
+		send = true,
+		emails = {
+			{name = "Garry Newman", email = "garry@facepunch.com", subject = "#TraitorJoes.Garry.Subject", text = "TraitorJoes.Garry.Text"}
+		}
+	},
+	{
+		inbox = "Sent Items",
+		icon = emailSent,
+		send = true,
+		emails = {
+			{name = "Bad King Urgrain", email = "bku@badking.net", subject = "#TraitorJoes.RadioStation.Subject", text = "TraitorJoes.RadioStation.Text"},
+			{name = "Bad King Urgrain", email = "bku@badking.net", subject = "#TraitorJoes.NewLocation.Subject", text = "TraitorJoes.NewLocation.Text"}
+		}
+	},
+	{
+		inbox = "Junk E-mail",
+		icon = emailSpam,
+		emails = {
+			{name = "dogshit.gg", email = "gambamarketing@dogshit.gg", subject = "#TraitorJoes.Inventory.Subject", text = "TraitorJoes.Inventory.Text"},
+			{name = "", email = "@", subject = "", text = "TraitorJoes.Amstr.Text", att = "mall_member/figardo/amstr.wav"}
+		}
+	}
+}
+
+local function ShowEmailScreen(self)
+	if CLIENT then
+		TRAITORJOE.Computer = self
+	end
+
+	if IsValid(TRAITORJOE.Overlay) then
+		return
+	end
+
+	local w, h = math.min(ScrW(), ScrH() * (4 / 3)), ScrH()
+
+	local tjOverlay = vgui.Create("DFrame")
+	TRAITORJOE.Overlay = tjOverlay
+
+	tjOverlay:SetSize(w, h)
+	tjOverlay:SetX((ScrW() / 2) - (w / 2))
+	tjOverlay.Paint = nil
+
+	tjOverlay:SetDraggable(false)
+	tjOverlay:SetVisible(true)
+	tjOverlay:ShowCloseButton(true)
+	tjOverlay:SetDeleteOnClose(true)
+
+	local desktopBackground = vgui.Create("DImage", tjOverlay)
+	desktopBackground:SetSize(w, h)
+	desktopBackground:SetImage("mall_member/figardo/desktop")
+	desktopBackground:SetMouseInputEnabled(true)
+
+	local ew, eh = w * 0.5125, h * 0.45
+
+	local outlook = vgui.Create("DPanel", desktopBackground)
+	outlook:SetSize(ew, eh)
+	outlook:SetPos(w * 0.4485, h * 0.301)
+	outlook:DockPadding(5, 5, 5, 5)
+	outlook.Paint = nil
+
+	local inboxParent = vgui.Create("DPanel", outlook)
+	inboxParent:Dock(LEFT)
+	inboxParent:SetWide(ew / 4)
+	inboxParent:DockMargin(0, 0, 0, eh * 0.3)
+
+	local inboxes = vgui.Create("DListLayout", inboxParent)
+	inboxes:SetWide(ew / 4)
+
+	local sidePadding = ScreenScaleH(2)
+	local headerHeight = ScreenScaleH(12)
+	local iconSize = math.ceil(ScreenScaleH(8))
+
+	local inboxHeader = vgui.Create("DPanel")
+	inboxHeader:SetSize(inboxes:GetWide(), headerHeight + sidePadding + iconSize)
+	inboxHeader.Paint = function(s, sw, sh)
+		surface.SetDrawColor(74, 121, 177)
+		surface.DrawRect(0, 0, sw, headerHeight)
+
+		surface.SetDrawColor(18, 60, 134)
+		surface.SetMaterial(grad)
+		surface.DrawTexturedRect(0, 0, sw, headerHeight)
+
+		surface.SetTextColor(255, 255, 255)
+		surface.SetFont("EmailHead")
+		surface.SetTextPos(sidePadding, headerHeight * 0.1)
+		surface.DrawText("Mail")
+
+		surface.SetDrawColor(255, 255, 255)
+		surface.SetMaterial(emailBox)
+		surface.DrawTexturedRect(sidePadding, headerHeight, iconSize + 1, iconSize)
+
+		surface.SetTextColor(40, 40, 40)
+		surface.SetFont("EmailBold")
+		surface.SetTextPos((sidePadding * 2) + iconSize, headerHeight + 2)
+		surface.DrawText("Mailbox - Traitor Joe")
+	end
+	inboxes:Add(inboxHeader)
+
+	local activeInbox, activeEmail
+
+	for i = 1, #emailData do
+		local data = emailData[i]
+		local text = data.inbox
+		local icon = data.icon
+		local emails = data.emails
+
+		local inboxButton = vgui.Create("DButton")
+		inboxButton:SetSize(inboxes:GetWide(), sidePadding + iconSize)
+		inboxButton:SetText("")
+		inboxButton:SetCursor("arrow")
+
+		inboxButton.Paint = function(s, sw, sh)
+			surface.SetDrawColor(255, 255, 255)
+			surface.SetMaterial(icon)
+			surface.DrawTexturedRect((sidePadding * 2) + iconSize, 0, iconSize + 1, iconSize)
+
+			surface.SetFont("EmailBold")
+			local inboxText = text .. " (" .. #emails .. ")"
+			local tx = surface.GetTextSize(inboxText)
+
+			local textx = (sidePadding * 3) + (iconSize * 2)
+
+			if data.active then
+				surface.SetDrawColor(209, 205, 184)
+				surface.DrawRect(textx, 0, tx, sh)
+			end
+
+			surface.SetTextColor(40, 40, 40)
+			surface.SetTextPos(textx, 2)
+			surface.DrawText(inboxText)
+		end
+		inboxButton.DoClick = function()
+			if activeInbox then
+				activeInbox.active = false
+				if IsValid(activeInbox.pnl) then
+					activeInbox.pnl:Hide()
+				end
+			end
+
+			if activeEmail then
+				activeEmail.active = false
+
+				if IsValid(activeEmail.pnl) then
+					activeEmail.pnl:Hide()
+				end
+			end
+
+			activeInbox = data
+			data.active = true
+			data.pnl:Show()
+		end
+
+		inboxes:Add(inboxButton)
+
+		local emailspnl = vgui.Create("DListLayout", outlook)
+		emailspnl:SetPaintBackground(true)
+		emailspnl:SetBackgroundColor(Color(255, 255, 255))
+		emailspnl:SetSize(ew / 4, eh)
+		emailspnl:Dock(LEFT)
+		emailspnl:DockMargin(5, 0, 0, 0)
+
+		local emailsHeader = vgui.Create("DPanel")
+		emailsHeader:SetSize(emailspnl:GetWide(), headerHeight)
+		emailsHeader.Paint = function(s, sw, sh)
+			surface.SetDrawColor(74, 121, 177)
+			surface.DrawRect(0, 0, sw, headerHeight)
+
+			surface.SetDrawColor(18, 60, 134)
+			surface.SetMaterial(grad)
+			surface.DrawTexturedRect(0, 0, sw, headerHeight)
+
+			surface.SetTextColor(255, 255, 255)
+			surface.SetFont("EmailHead")
+			surface.SetTextPos(sidePadding, headerHeight * 0.1)
+			surface.DrawText(text)
+
+			-- surface.SetDrawColor(255, 255, 255)
+			-- surface.SetMaterial(emailBox)
+			-- surface.DrawTexturedRect(6, 35, 20, 20)
+
+			-- surface.SetTextColor(40, 40, 40)
+			-- surface.SetFont("EmailBold")
+			-- surface.SetTextPos(31, 37)
+			-- surface.DrawText("Mailbox - Traitor Joe")
+		end
+		emailspnl:Add(emailsHeader)
+
+		for j = 1, #emails do
+			local edata = emails[j]
+			local ename = edata.name
+			local eemail = edata.email
+			local esubject = edata.subject
+			local etext = edata.text
+
+			local emailButton = vgui.Create("DButton")
+			emailButton:SetSize(emailspnl:GetWide(), (sidePadding * 2) + (iconSize * 2))
+			emailButton:SetText("")
+			emailButton:SetCursor("arrow")
+
+			local param = data.send and "TraitorJoes.Email.To" or "TraitorJoes.Email.From"
+			param = language.GetPhrase(param)
+
+			emailButton.Paint = function(s, sw, sh)
+				if edata.active then
+					surface.SetDrawColor(209, 205, 184)
+					surface.DrawRect(0, 0, sw, sh)
+				end
+
+				surface.SetDrawColor(255, 255, 255)
+				surface.SetMaterial(edata.read and emailRead or emailUnread)
+				surface.DrawTexturedRect(sidePadding, sidePadding, iconSize, iconSize)
+
+				local textx = (sidePadding * 2) + iconSize
+
+				surface.SetTextColor(40, 40, 40)
+				surface.SetFont("EmailBold")
+				surface.SetTextPos(textx, sidePadding)
+				surface.DrawText(ename)
+
+				surface.SetTextColor(40, 40, 40)
+				surface.SetFont("EmailNormal")
+				surface.SetTextPos(textx + 1, iconSize + (sidePadding / 2))
+				surface.DrawText(esubject)
+			end
+
+			emailButton.DoClick = function()
+				if !edata.read then
+					edata.read = true
+				end
+
+				if activeEmail then
+					activeEmail.active = false
+
+					if IsValid(activeEmail.pnl) then
+						activeEmail.pnl:Hide()
+					end
+				end
+
+				if !IsValid(edata.pnl) then
+					local pnl = vgui.Create("DPanel", outlook)
+					pnl:Dock(FILL)
+					pnl:DockMargin(5, 0, 0, 0)
+					pnl:SetBackgroundColor(Color(174, 184, 213))
+					pnl:InvalidateParent(true)
+
+					local wide = pnl:GetWide()
+					local padding = wide * 0.02
+
+					surface.SetFont("EmailHead")
+					local _, th = surface.GetTextSize(esubject)
+					local _, th2 = surface.GetTextSize(ename)
+					local lineY = padding + th + th2 + (sidePadding * 2)
+
+					local textpnl = vgui.Create("RichText", pnl)
+					textpnl:SetPos(padding + sidePadding, padding + lineY + sidePadding)
+					textpnl:SetPaintedManually(true)
+					textpnl:SetText(language.GetPhrase(etext))
+					textpnl:SetSize(wide - (padding * 2) - sidePadding, pnl:GetTall() - (padding * 2) - lineY - sidePadding)
+					textpnl:SetTextSelectionColors(COLOR_BLACK, Color(174, 184, 213, 200))
+
+					function textpnl:PerformLayout()
+						self:SetFontInternal("EmailNormal")
+
+						self:SetFGColor(40, 40, 40, 255)
+					end
+
+					local sndpnl
+
+					pnl.PaintOver = function(s, sw, sh)
+						surface.SetDrawColor(255, 255, 255)
+						surface.DrawRect(padding, padding, sw - (padding * 2), sh - (padding * 2))
+
+						surface.SetTextColor(40, 40, 40)
+						surface.SetFont("EmailHead")
+						surface.SetTextPos(padding + sidePadding, padding)
+						surface.DrawText(esubject)
+
+						surface.SetFont("EmailHeadThin")
+						surface.SetTextPos(padding + sidePadding, padding + th + sidePadding)
+						surface.DrawText(string.format(param, eemail))
+
+						surface.SetDrawColor(40, 40, 40)
+						surface.DrawLine(padding + sidePadding, lineY, sw - sidePadding - padding, lineY)
+
+						textpnl:PaintManual()
+
+						if sndpnl then
+							sndpnl:PaintManual()
+						end
+					end
+
+					edata.pnl = pnl
+
+					if edata.att then
+						TRAITORJOE.Base.Att = true
+
+						sndpnl = vgui.Create("DButton", textpnl)
+						sndpnl:SetPos(0, (th * 3) + sidePadding)
+						sndpnl:SetSize(wide * 0.35, pnl:GetTall() * 0.03)
+						sndpnl:SetPaintedManually(true)
+						sndpnl:SetText("")
+						sndpnl.Paint = function(s)
+							local sndPlaying = edata.snd and edata.snd:IsPlaying()
+
+							surface.SetDrawColor(255, 255, 255, 255)
+							surface.SetMaterial(sndPlaying and emailSoundPlaying or emailSound)
+							surface.DrawTexturedRect(0, 0, iconSize, iconSize)
+
+							surface.SetTextColor(40, 40, 40)
+							surface.SetTextPos(iconSize + sidePadding, 0)
+							surface.SetFont("EmailNormal")
+							surface.DrawText("#TraitorJoes.Attachment")
+						end
+
+						sndpnl.DoClick = function(s)
+							if !edata.snd or !edata.snd:IsPlaying() then
+								local snd = CreateSound(TRAITORJOE.Computer, edata.att)
+								snd:Play()
+								snd:ChangeVolume(0.1)
+
+								edata.snd = snd
+							else
+								edata.snd:Stop()
+
+								edata.snd = nil
+							end
+						end
+					end
+				end
+
+				activeEmail = edata
+				edata.active = true
+				edata.pnl:Show()
+			end
+
+			emailspnl:Add(emailButton)
+
+			edata.active = false
+		end
+
+		if i == 1 then
+			data.active = true
+			activeInbox = data
+		else
+			data.active = false
+			emailspnl:Hide()
+		end
+
+		data.pnl = emailspnl
+	end
+
+	tjOverlay:MakePopup()
+end
+
+hook.Add("OnPauseMenuShow", "TraitorJoeCloseComputer", function(ply, bind, pressed)
+	if IsValid(TRAITORJOE.Overlay) then
+		TRAITORJOE.Overlay:Remove()
+		return false
+	end
+end)
+
 local useEnts = {
 	["tj_shitleton"] = ShowSearchScreen,
 	["tj_shitphone"] = function()
-		if IsValid(tjOverlay) then
+		if IsValid(TRAITORJOE.Overlay) then
 			return
 		end
 
-		tjOverlay = vgui.Create("DImage")
+		local tjOverlay = vgui.Create("DImage")
 		tjOverlay:SetSize(ScrW(), ScrH())
 		tjOverlay:SetImage("mall_member/figardo/phonemsg")
 
@@ -784,24 +1118,10 @@ local useEnts = {
 			hook.Remove("PlayerBindPress", "TraitorJoeClosePhoneMsg")
 		end)
 	end,
-	["tj_final_computer"] = function()
-		if IsValid(tjOverlay) then
-			return
-		end
-
-		tjOverlay = vgui.Create("DImage")
-		tjOverlay:SetSize(ScrW(), ScrH())
-		tjOverlay:SetImage("mall_member/figardo/phonemsg")
-
-		hook.Add("PlayerBindPress", "TraitorJoeClosePhoneMsg", function(ply, bind, pressed)
-			if IsValid(tjOverlay) then
-				tjOverlay:Remove()
-			end
-
-			hook.Remove("PlayerBindPress", "TraitorJoeClosePhoneMsg")
-		end)
-	end
+	["tj_final_computer"] = ShowEmailScreen
 }
+
+-- Misc
 
 if SERVER then
 	util.AddNetworkString("TraitorJoe_Annoyed")
@@ -826,20 +1146,57 @@ if SERVER then
 		ent:Annoy(annoyance, ply)
 	end
 
+	local function SpawnOnTarget(class, target, noSpawn)
+		local ent = ents.Create(class)
+		ent:SetPos(target:GetPos())
+		ent:SetAngles(target:GetAngles())
+
+		if !noSpawn then
+			ent:Spawn()
+		end
+
+		return ent
+	end
+
+	local vec0 = Vector(0, 0, 0)
+	local vec1 = Vector(1, 1, 1)
+	local angle0 = Angle(0, 0, 0)
+	local function ResetBoneManips(ent)
+		for i = 0, ent:GetBoneCount() - 1 do
+			if ent:GetManipulateBoneAngles(i) != angle0 then
+				ent:ManipulateBoneAngles(i, angle0)
+			end
+
+			if ent:GetManipulateBoneJiggle(i) != 0 then
+				ent:ManipulateBoneJiggle(i, 0)
+			end
+
+			if ent:GetManipulateBonePosition(i) != vec0 then
+				ent:ManipulateBonePosition(i, vec0)
+			end
+
+			if ent:GetManipulateBoneScale(i) != vec1 then
+				ent:ManipulateBoneScale(i, vec1)
+			end
+		end
+	end
+
 	function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 		if left then
-			if IsValid(self.Joe.Entity) then
-				if !IsValid(self.Joe.Entity.hat) then
-					self.Joe.Entity:SpawnHat()
+			local joe = self.Joe.Entity
+			if IsValid(joe) then
+				if !IsValid(joe.hat) then
+					joe:SpawnHat()
+				end
+
+				if joe:HasBoneManipulations() then
+					ResetBoneManips(joe)
 				end
 			else
 				for _, ent in ents.Iterator() do
 					if ent:GetName() != "tj_traitorjoe_spawn" then continue end
 
-					local npc = ents.Create("tj_npc_joe")
-					npc:SetPos(ent:GetPos())
-					npc:SetAngles(ent:GetAngles())
-					npc:Spawn()
+					local npc = SpawnOnTarget("tj_npc_joe", ent)
 
 					if !noAnnoy then
 						npc:Annoy(ANNOY_REMOVED)
@@ -855,10 +1212,7 @@ if SERVER then
 				for _, ent in ents.Iterator() do
 					if ent:GetName() != "tj_traitortony_spawn" then continue end
 
-					local npc = ents.Create("tj_npc_tony")
-					npc:SetPos(ent:GetPos())
-					npc:SetAngles(ent:GetAngles())
-					npc:Spawn()
+					local npc = SpawnOnTarget("tj_npc_tony", ent)
 
 					self.Tony.Entity = npc
 
@@ -874,10 +1228,7 @@ if SERVER then
 				for _, ent in ents.Iterator() do
 					if ent:GetName() != "tj_radio_spawn" then continue end
 
-					local radio = ents.Create("tj_radio")
-					radio:SetPos(ent:GetPos())
-					radio:SetAngles(ent:GetAngles())
-					radio:Spawn()
+					local radio = SpawnOnTarget("tj_radio", ent)
 
 					self.Radio = radio
 
@@ -891,6 +1242,39 @@ if SERVER then
 		end
 	end
 
+	hook.Add("PlayerSpray", "TraitorJoesSprayDetector", function(ply)
+		local trace = util.GetPlayerTrace(ply, ply:EyeAngles():Forward())
+		trace.mask = MASK_SOLID_BRUSHONLY
+		trace = util.TraceLine(trace)
+
+		local pos = trace.HitPos
+		local min, max = TRAITORJOE.Bounds.Min, TRAITORJOE.Bounds.Max
+
+		if pos.x >= min.x and pos.x <= max.x
+		and pos.y >= min.y and pos.y <= max.y
+		and pos.z >= min.z and pos.z <= max.z then
+			TRAITORJOE.Joe.Entity:Annoy(ANNOY_SPRAY)
+		end
+	end)
+
+	local function SpawnedSomething(ply, ent)
+		local pos = ent:GetPos()
+		local min, max = TRAITORJOE.Bounds.Min, TRAITORJOE.Bounds.Max
+
+		if pos.x >= min.x and pos.x <= max.x
+		and pos.y >= min.y and pos.y <= max.y
+		and pos.z >= min.z and pos.z <= max.z then
+			TRAITORJOE.Joe.Entity:Annoy(ANNOY_SPAWN)
+		end
+	end
+	hook.Add("PlayerSpawnedEffect", "TraitorJoesSpawnCheck", function(ply, model, ent) SpawnedSomething(ply, ent) end)
+	hook.Add("PlayerSpawnedNPC", "TraitorJoesSpawnCheck", function(ply, ent) SpawnedSomething(ply, ent) end)
+	hook.Add("PlayerSpawnedProp", "TraitorJoesSpawnCheck", function(ply, model, ent) SpawnedSomething(ply, ent) end)
+	hook.Add("PlayerSpawnedRagdoll", "TraitorJoesSpawnCheck", function(ply, model, ent) SpawnedSomething(ply, ent) end)
+	hook.Add("PlayerSpawnedSENT", "TraitorJoesSpawnCheck", function(ply, ent) SpawnedSomething(ply, ent) end)
+	hook.Add("PlayerSpawnedSWEP", "TraitorJoesSpawnCheck", function(ply, ent) SpawnedSomething(ply, ent) end)
+	hook.Add("PlayerSpawnedVehicle", "TraitorJoesSpawnCheck", function(ply, ent) SpawnedSomething(ply, ent) end)
+
 	local hatModel = Model("models/mall_member/figardo/vending_hat.mdl")
 	hook.Add("PostCleanupMap", "TraitorJoesCleanupPrevention", function()
 		TRAITORJOE:OnEnterOrLeave(true, engine.ActiveGamemode() == "terrortown")
@@ -903,14 +1287,10 @@ if SERVER then
 			end
 
 			if ent:GetName() == "tj_hat_spawn" then
-				local hat = ents.Create("tj_hat")
-				if !IsValid(hat) then return end
+				local hat = SpawnOnTarget("tj_hat", ent, true)
 
 				hat:SetModel(hatModel)
 				hat.ShouldBoneMerge = false
-
-				hat:SetPos(ent:GetPos())
-				hat:SetAngles(ent:GetAngles())
 
 				hat:Spawn()
 
@@ -934,14 +1314,10 @@ if SERVER then
 			end
 
 			if name == "tj_hat_spawn" then
-				local hat = ents.Create("tj_hat")
-				if !IsValid(hat) then return end
+				local hat = SpawnOnTarget("tj_hat", ent, true)
 
 				hat:SetModel(hatModel)
 				hat.ShouldBoneMerge = false
-
-				hat:SetPos(ent:GetPos())
-				hat:SetAngles(ent:GetAngles())
 
 				hat:Spawn()
 
@@ -957,10 +1333,7 @@ if SERVER then
 			end
 
 			if name == "tj_radio_spawn" then
-				local radio = ents.Create("tj_radio")
-				radio:SetPos(ent:GetPos())
-				radio:SetAngles(ent:GetAngles())
-				radio:Spawn()
+				local radio = SpawnOnTarget("tj_radio", ent)
 
 				TRAITORJOE.Radio = radio
 
@@ -968,17 +1341,22 @@ if SERVER then
 			end
 
 			if name == "tj_traitorjoe_spawn" then
-				local npc = ents.Create("tj_npc_joe")
-				npc:SetPos(ent:GetPos())
-				npc:SetAngles(ent:GetAngles())
-				npc:Spawn()
+				local npc = SpawnOnTarget("tj_npc_joe", ent)
 
 				TRAITORJOE.Joe.Entity = npc
 
 				-- this is a terrible approach! but i don't care :)
-				TRAITORJOE.Joe.Jail.Origin = ent:GetPos()
-				TRAITORJOE.Joe.Jail.Min = ent:GetPos() + Vector(-218, 126, 0)
-				TRAITORJOE.Joe.Jail.Max = ent:GetPos() + Vector(218, -18, 120)
+				local boundsMin = ent:GetPos() + Vector(-218, 254, 0)
+				local boundsMax = ent:GetPos() + Vector(218, -562, 120)
+
+				TRAITORJOE.Bounds.Min = Vector(math.min(boundsMin.x, boundsMax.x), math.min(boundsMin.y, boundsMax.y), math.min(boundsMin.z, boundsMax.z))
+				TRAITORJOE.Bounds.Max = Vector(math.max(boundsMin.x, boundsMax.x), math.max(boundsMin.y, boundsMax.y), math.max(boundsMin.z, boundsMax.z))
+
+				local jailMin = ent:GetPos() + Vector(-218, 126, 0)
+				local jailMax = ent:GetPos() + Vector(218, -18, 120)
+
+				TRAITORJOE.Joe.Jail.Min = Vector(math.min(jailMin.x, jailMax.x), math.min(jailMin.y, jailMax.y), math.min(jailMin.z, jailMax.z))
+				TRAITORJOE.Joe.Jail.Max = Vector(math.max(jailMin.x, jailMax.x), math.max(jailMin.y, jailMax.y), math.max(jailMin.z, jailMax.z))
 
 				continue
 			end
@@ -987,46 +1365,47 @@ if SERVER then
 				TRAITORJOE.DefibSpawn = ent
 
 				if IsMounted("treason") then
-					local npc = ents.Create("tj_npc_tony")
-					npc:SetPos(ent:GetPos())
-					npc:SetAngles(ent:GetAngles())
-					npc:Spawn()
+					local npc = SpawnOnTarget("tj_npc_tony", ent)
 
 					TRAITORJOE.Tony.Entity = npc
 				end
+
+				continue
 			end
 		end
 	end)
 
-	if engine.ActiveGamemode() != "terrortown" then
-		hook.Add("KeyRelease", "TraitorJoesCopiedUseKey", function(ply, key)
-			if key != IN_USE or !IsValid(ply) or !ply:Alive() then return end
+	hook.Add("PostGamemodeLoaded", "TraitorJoesTTT2Workaround", function()
+		if engine.ActiveGamemode() != "terrortown" or TTT2 then -- ttt2 is a deeply unserious fork
+			hook.Add("KeyRelease", "TraitorJoesCopiedUseKey", function(ply, key)
+				if key != IN_USE or !IsValid(ply) or !ply:Alive() then return end
 
-			local tr = util.TraceLine({
-				start  = ply:GetShootPos(),
-				endpos = ply:GetShootPos() + ply:GetAimVector() * 84,
-				filter = ply,
-				mask   = MASK_SHOT
-			});
+				local tr = util.TraceLine({
+					start  = ply:GetShootPos(),
+					endpos = ply:GetShootPos() + ply:GetAimVector() * 84,
+					filter = ply,
+					mask   = MASK_SHOT
+				});
 
-			local ent = tr.Entity
-			if !tr.Hit or !IsValid(ent) then return end
+				local ent = tr.Entity
+				if !tr.Hit or !IsValid(ent) then return end
 
-			if ent.CanUseKey and ent.UseOverride then
-				local phys = ent:GetPhysicsObject()
-				if IsValid(phys) and !phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) then
-					ent:UseOverride(ply)
-					return true
-				else
-					-- do nothing, can't +use held objects
+				if ent.CanUseKey and ent.UseOverride then
+					local phys = ent:GetPhysicsObject()
+					if IsValid(phys) and !phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) then
+						ent:UseOverride(ply)
+						return true
+					else
+						-- do nothing, can't +use held objects
+						return true
+					end
+				elseif ent.player_ragdoll then
+					CORPSE.ShowSearch(ply, ent, ply:KeyDown(IN_WALK) or ply:KeyDownLast(IN_WALK))
 					return true
 				end
-			elseif ent.player_ragdoll then
-				CORPSE.ShowSearch(ply, ent, ply:KeyDown(IN_WALK) or ply:KeyDownLast(IN_WALK))
-				return true
-			end
-		end)
-	end
+			end)
+		end
+	end)
 
 	net.Receive("TraitorJoe_ApplyForMembership", function(_, ply)
 		TRAITORJOE.Joe.Members[ply:SteamID64()] = true
@@ -1045,11 +1424,19 @@ if SERVER then
 			if !IsValid(ent:GetOwner()) then return end -- if there's already a defib on the floor then don't bother spawning another
 		end
 
-		local spawn = TRAITORJOE.DefibSpawn
-		local ent = ents.Create("weapon_ttt_tj_defib")
-		ent:SetPos(spawn:GetPos())
-		ent:SetAngles(spawn:GetAngles())
-		ent:Spawn()
+		SpawnOnTarget("weapon_ttt_tj_defib", TRAITORJOE.DefibSpawn)
+	end)
+
+	net.Receive("TraitorJoe_HatTransfer", function(_, ply)
+		local hat = ply.hat
+		if !IsValid(hat) or hat:GetParent() != ply then return end
+
+		hat:Drop()
+
+		local joe = TRAITORJOE.Joe.Entity
+		if joe.hat then return end
+
+		hat:UseOverride(joe)
 	end)
 
 	net.Receive("TraitorJoe_TonyDefib", function(_, ply)
@@ -1078,6 +1465,75 @@ if SERVER then
 		ply:AddCredits(5)
 	end)
 else
+	local function CreateEmailFonts()
+		surface.CreateFont("EmailBold", {font = "Tahoma", size = ScreenScaleH(7), weight = 1000})
+		surface.CreateFont("EmailNormal", {font = "Tahoma", size = ScreenScaleH(7), weight = 500})
+		surface.CreateFont("EmailHead", {font = "Arial", size = ScreenScaleH(10), weight = 1000})
+		surface.CreateFont("EmailHeadThin", {font = "Arial", size = ScreenScaleH(10), weight = 500})
+	end
+	CreateEmailFonts()
+	hook.Add("OnScreenSizeChanged", "TraitorJoesFontRefresh", CreateEmailFonts)
+
+	local PANEL = {}
+
+	function PANEL:Init()
+		self.imgAvatar = vgui.Create( "DImage", self )
+		self.imgAvatar:SetMouseInputEnabled( false )
+		self.imgAvatar:SetKeyboardInputEnabled( false )
+		self.imgAvatar.PerformLayout = function(s) s:Center() end
+
+		self:SetAvatarSize(32)
+
+		self:AddLayer(self.imgAvatar)
+
+		--return self.BaseClass.Init(self)
+	end
+
+	function PANEL:SetAvatarSize(s)
+		self.imgAvatar:SetSize(s, s)
+	end
+
+	function PANEL:SetAvatar(icon)
+		self.imgAvatar:SetImage(icon)
+	end
+
+	vgui.Register( "SimpleIconFakeAvatar", PANEL, "LayeredIcon" )
+
+	PANEL = {}
+	local facepadding = 6
+	local template = Material("mall_member/figardo/icon_template")
+	function PANEL:Paint(w, h)
+		surface.SetDrawColor(255, 255, 255, 255)
+		surface.SetMaterial(template)
+		surface.DrawTexturedRect(0, 0, w, h)
+
+		local facew = w * 0.625
+		local x, y = (w / 2) - (facew / 2) + facepadding, facepadding
+		self:PaintAt(x, y, facew - (facepadding * 2), h - (facepadding * 2))
+	end
+
+	function PANEL:PaintOver(w, h)
+		if self.Hat then
+			local facew = self.HatWidthOverride or 0.625
+			facew = facew * w
+
+			surface.SetDrawColor(255, 255, 255, 255)
+			surface.SetMaterial(self.Hat)
+			surface.DrawTexturedRect((w / 2) - (facew / 2), -facepadding, facew, h * 0.425)
+		end
+	end
+
+	function PANEL:SetFace(folder, face)
+		if !folder or !face then
+			print("folder =", folder)
+			print("face =", face)
+			error("PANEL:SetFace called with nil parameters!")
+		end
+
+		self:SetImage("mall_member/figardo/faces/" .. folder .. "/" .. face)
+	end
+	vgui.Register("DTJFace", PANEL, "DImage")
+
 	local function bitsRequired(num)
 		local bits, max = 0, 1
 		while max <= num do
@@ -1093,6 +1549,10 @@ else
 		if !IsValid(ent) or !ent.Annoy then return end
 
 		ent:Annoy(annoyance)
+	end)
+
+	net.Receive("TraitorJoe_BuyItem", function()
+		TRAITORJOE.Joe.ItemsBought = net.ReadUInt(3)
 	end)
 
 	hook.Add("PlayerBindPress", "TraitorJoesMagicUseKey", function(ply, bind, pressed)
@@ -1118,7 +1578,7 @@ else
 			return
 		end
 
-		func()
+		func(ent)
 	end)
 
 	local rag_color = Color(200,200,200,255)

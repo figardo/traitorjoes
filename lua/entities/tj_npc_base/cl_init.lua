@@ -1,6 +1,6 @@
-if game.GetMap() != "mall_store_size" then return end
-
 include("shared.lua")
+
+if game.GetMap() != "mall_store_size" then return end
 
 ENT.PrintName = "base"
 
@@ -57,6 +57,12 @@ local function baseTalk(self)
 		{text = "Base.Give.4"}
 	}
 
+	if TRAITORJOE.Base.Att and !TRAITORJOE.Base.Att2 then
+		tbl["Base.Amstr"] = {
+			{text = "Base.Amstr.1"}
+		}
+	end
+
 	return tbl
 end
 
@@ -73,7 +79,7 @@ ENT.ChatLayout = {
 
 	["Base.Intro.1"] = {
 		{text = "Base.Intro.2"},
-		{text = "Base.Intro.3"},
+		{text = "Base.Intro.3"}
 	},
 	["Base.Intro.3"] = baseTalk,
 	["Base.Main"] = baseTalk,
@@ -81,7 +87,16 @@ ENT.ChatLayout = {
 	["Base.Give.4"] = baseTalk
 }
 
-ENT.ChatHooks = {}
+ENT.ChatPriority = {
+	-- lower = higher
+	["Base.WhoAreYou"] = 1,
+	["Base.Give"] = 2,
+	["Base.Amstr"] = 3
+}
+
+ENT.ChatHooks = {
+	["Base.Amstr.1"] = function() TRAITORJOE.Base.Att2 = true end
+}
 
 ENT.TJGlobalName = "Base"
 
@@ -256,17 +271,30 @@ function ENT:CreateChatOptions(key, face, idx)
 
 	if !options then return end
 
-	local optList = {}
+	local optPnlList = {}
 
-	local i = 1
-	for k, v in pairs(options) do -- add our choices
+	local optOrder = {}
+	for k, v in pairs(options) do
+		local pri = self.ChatPriority[k]
+		if !pri then pri = #optOrder + 1 end
+
+		optOrder[pri] = {k = k, v = v}
+	end
+
+	for i = 1, #optOrder do -- add our choices
+		local opt = optOrder[i]
+		if !opt then continue end
+
+		local k = opt.k
+		local v = opt.v
+
 		local doption = vgui.Create("DButton", dcont)
 		doption:SetPos(8, dtext:GetY() + dtext:GetTall() + (32 * i))
 		doption:SetSize(427, 25)
 		doption:SetText(self:ChatToString(k))
 		doption.DoClick = function()
-			for j = 1, #optList do
-				local pnl = optList[j]
+			for j = 1, #optPnlList do
+				local pnl = optPnlList[j]
 				if IsValid(pnl) then
 					pnl:Remove()
 				end
@@ -309,7 +337,7 @@ function ENT:CreateChatOptions(key, face, idx)
 			self:CreateChatOptions(key, data.face, idx + 1)
 		end
 
-		optList[i] = doption
+		optPnlList[i] = doption
 		i = i + 1
 	end
 end

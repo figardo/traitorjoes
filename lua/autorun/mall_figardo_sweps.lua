@@ -344,6 +344,8 @@ if engine.ActiveGamemode() != "terrortown" then
 
 		RunString(str, class)
 
+		_G[global.name].Spawnable = false
+
 		local slash = class:find("/")
 		if slash then
 			class = class:Left(slash - 1)
@@ -375,6 +377,7 @@ end
 local function LoadExtras()
 	local tbl = weapons.Get("weapon_ttt_m16")
 
+	tbl.Spawnable			= false
 	tbl.PrintName			= "Carbine"
 
 	tbl.ViewModel			= "models/weapons/v_rif_m4a1.mdl"

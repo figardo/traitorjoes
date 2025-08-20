@@ -17,16 +17,13 @@ util.AddNetworkString("TraitorJoe_ApplyForMembership")
 util.AddNetworkString("TraitorJoe_Redeem")
 util.AddNetworkString("TraitorJoe_SpawnTrash")
 util.AddNetworkString("TraitorJoe_SpawnDefib")
+util.AddNetworkString("TraitorJoe_HatTransfer")
 
 function ENT:Think()
 	BaseClass.Think(self)
 
 	local pos = self:GetPos()
-	local jailMin = TRAITORJOE.Joe.Jail.Min
-	local jailMax = TRAITORJOE.Joe.Jail.Max
-
-	local min = Vector(math.min(jailMin.x, jailMax.x), math.min(jailMin.y, jailMax.y), math.min(jailMin.z, jailMax.z))
-	local max = Vector(math.max(jailMin.x, jailMax.x), math.max(jailMin.y, jailMax.y), math.max(jailMin.z, jailMax.z))
+	local min, max = TRAITORJOE.Joe.Jail.Min, TRAITORJOE.Joe.Jail.Max
 
 	if pos.x >= min.x and pos.x <= max.x
 	and pos.y >= min.y and pos.y <= max.y
@@ -47,9 +44,10 @@ end
 
 local prizeThreshold = 5
 function ENT:BuyItem(ply, id)
-	if ply:GetCredits() <= 0 then return end
-
 	local item = self.EquipmentItems[id]
+
+	if !item.free and ply:GetCredits() <= 0 then return end
+
 	if isnumber(item.id) then
 		if !ply:GiveEquipmentItem(item.id) then return end
 	else
@@ -58,7 +56,9 @@ function ENT:BuyItem(ply, id)
 		ply:Give(item.id)
 	end
 
-	ply:SubtractCredits(1)
+	if !item.free then
+		ply:SubtractCredits(1)
+	end
 
 	local sid = ply:SteamID64()
 	if TRAITORJOE.Joe.Members[sid] then
@@ -80,12 +80,36 @@ net.Receive("TraitorJoe_BuyItem", function(_, ply)
 	joe:BuyItem(ply, net.ReadUInt(5))
 end)
 
-local vanish = Sound("friends/friend_online.wav")
+local delay_beamup = 1
+local delay_beamdown = 1
+local zap = Sound("ambient/levels/labs/electric_explosion4.wav")
+
 function ENT:Vanish(bool)
 	if bool then
-		self:EmitSound(vanish)
-	end
+		timer.Simple(delay_beamup, function()
+			if !IsValid(self) then return end
 
+			self:SetInvisible(true)
+			sound.Play(zap, self:GetPos(), 65, 100)
+		end)
+
+		local ang = self:GetAngles()
+
+		local edata_up = EffectData()
+		edata_up:SetOrigin(self:GetPos())
+		ang = Angle(0, ang.y, ang.r) -- deep copy
+		edata_up:SetAngles(ang)
+		edata_up:SetEntity(self)
+		edata_up:SetMagnitude(delay_beamup)
+		edata_up:SetRadius(delay_beamdown)
+
+		util.Effect("teleport_beamup", edata_up)
+	else
+		self:SetInvisible(false)
+	end
+end
+
+function ENT:SetInvisible(bool)
 	self:SetNoDraw(bool)
 	self:SetSolid(bool and SOLID_NONE or SOLID_BBOX)
 
@@ -105,7 +129,7 @@ net.Receive("TraitorJoe_Redeem", function(_, ply)
 
 	joe:Vanish(true)
 
-	local entCount = 2
+	local entCount = 3
 	for _, ent in ents.Iterator() do
 		if entCount == 0 then
 			break

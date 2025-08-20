@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8870"
-	"mapversion" "292"
+	"mapversion" "298"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -89,7 +89,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "292"
+	"mapversion" "298"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -20189,7 +20189,7 @@ entity
 	"maxdxlevel" "0"
 	"MinAnimTime" "5"
 	"mindxlevel" "0"
-	"model" "models/props/cs_office/computer.mdl"
+	"model" "models/mall_member/figardo/computer.mdl"
 	"modelscale" "1.0"
 	"PerformanceMode" "0"
 	"pressuredelay" "0"
@@ -25180,27 +25180,6 @@ entity
 }
 entity
 {
-	"id" "21440"
-	"classname" "point_worldtext"
-	"angles" "-0 0 0"
-	"color" "255 255 255 255"
-	"message" "WIP Pretend you found something cool in here :)"
-	"orientation" "0"
-	"rainbow" "0"
-	"textsize" "3"
-	"textspacingX" "0"
-	"textspacingY" "0"
-	"origin" "179 403 -488"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 -11268]"
-	}
-}
-entity
-{
 	"id" "21456"
 	"classname" "func_physbox"
 	"damagetoenablemotion" "0"
@@ -25929,7 +25908,7 @@ entity
 		}
 		side
 		{
-			"id" "0"
+			"id" "25714"
 			"plane" "(-43 288 -484) (-43 287 -484) (-43 287 -468)"
 			vertices_plus
 			{
@@ -26067,7 +26046,7 @@ entity
 		}
 		side
 		{
-			"id" "0"
+			"id" "25715"
 			"plane" "(95 287 -520) (95 288 -520) (95 288 -484)"
 			vertices_plus
 			{
@@ -26225,7 +26204,7 @@ entity
 		}
 		side
 		{
-			"id" "0"
+			"id" "25716"
 			"plane" "(94 287 -468) (94 288 -468) (95 288 -484)"
 			vertices_plus
 			{
@@ -26464,7 +26443,7 @@ entity
 	"classname" "trigger_physics_trap"
 	"angles" "0 0 0"
 	"dissolvetype" "0"
-	"origin" "-41 356 -496"
+	"origin" "-41 360 -496"
 	"spawnflags" "14"
 	"StartDisabled" "0"
 	"targetname" "tj_backroom_tp"
@@ -26478,13 +26457,13 @@ entity
 		side
 		{
 			"id" "25598"
-			"plane" "(-218 416 -436) (136 416 -436) (136 296 -436)"
+			"plane" "(-218 416 -436) (136 416 -436) (136 304 -436)"
 			vertices_plus
 			{
 				"v" "-218 416 -436"
 				"v" "136 416 -436"
-				"v" "136 296 -436"
-				"v" "-218 296 -436"
+				"v" "136 304 -436"
+				"v" "-218 304 -436"
 			}
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.25"
@@ -26496,11 +26475,11 @@ entity
 		side
 		{
 			"id" "25597"
-			"plane" "(-218 296 -556) (136 296 -556) (136 416 -556)"
+			"plane" "(-218 304 -556) (136 304 -556) (136 416 -556)"
 			vertices_plus
 			{
-				"v" "-218 296 -556"
-				"v" "136 296 -556"
+				"v" "-218 304 -556"
+				"v" "136 304 -556"
 				"v" "136 416 -556"
 				"v" "-218 416 -556"
 			}
@@ -26514,12 +26493,12 @@ entity
 		side
 		{
 			"id" "25596"
-			"plane" "(-218 416 -436) (-218 296 -436) (-218 296 -556)"
+			"plane" "(-218 416 -436) (-218 304 -436) (-218 304 -556)"
 			vertices_plus
 			{
 				"v" "-218 416 -436"
-				"v" "-218 296 -436"
-				"v" "-218 296 -556"
+				"v" "-218 304 -436"
+				"v" "-218 304 -556"
 				"v" "-218 416 -556"
 			}
 			"material" "TOOLS/TOOLSTRIGGER"
@@ -26532,12 +26511,12 @@ entity
 		side
 		{
 			"id" "25595"
-			"plane" "(136 416 -556) (136 296 -556) (136 296 -436)"
+			"plane" "(136 416 -556) (136 304 -556) (136 304 -436)"
 			vertices_plus
 			{
 				"v" "136 416 -556"
-				"v" "136 296 -556"
-				"v" "136 296 -436"
+				"v" "136 304 -556"
+				"v" "136 304 -436"
 				"v" "136 416 -436"
 			}
 			"material" "TOOLS/TOOLSTRIGGER"
@@ -26568,13 +26547,13 @@ entity
 		side
 		{
 			"id" "25593"
-			"plane" "(136 296 -556) (-218 296 -556) (-218 296 -436)"
+			"plane" "(136 304 -556) (-218 304 -556) (-218 304 -436)"
 			vertices_plus
 			{
-				"v" "136 296 -556"
-				"v" "-218 296 -556"
-				"v" "-218 296 -436"
-				"v" "136 296 -436"
+				"v" "136 304 -556"
+				"v" "-218 304 -556"
+				"v" "-218 304 -436"
+				"v" "136 304 -436"
 			}
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.25"
@@ -26604,7 +26583,7 @@ entity
 	"classname" "point_worldtext"
 	"angles" "-0 90 0"
 	"color" "255 255 255 255"
-	"message" "Song radio is temporary"
+	"message" "Radio song is temporary"
 	"orientation" "0"
 	"rainbow" "0"
 	"textsize" "3"
@@ -26617,6 +26596,24 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 -11268]"
+	}
+}
+entity
+{
+	"id" "23206"
+	"classname" "ttt_map_settings"
+	"angles" "0 0 0"
+	"cbar_buttons" "0"
+	"cbar_doors" "0"
+	"cbar_other" "0"
+	"origin" "29 -166 -546"
+	"propspec_allow_named" "0"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
 	}
 }
 cameras

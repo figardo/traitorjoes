@@ -13,7 +13,7 @@ local initialMenu = {
 	end
 }
 
-local talkMenu = function()
+local function talkMenu()
 	local tbl = {}
 
 	tbl["WhoAreYou"] = {
@@ -168,6 +168,11 @@ ENT.ChatLayout = {
 		{face = "smirk", text = "Joe.Shop.Sandbox.4"},
 		function(self) return self:ShowShopScreen("Joe.Shop.More") end
 	},
+	["Joe.Shop.SlotFilled.1"] = {
+		{face = "lookside", text = "Joe.Shop.SlotFilled.2"},
+		{face = "smile", text = "Joe.Shop.SlotFilled.3"},
+		function(self) return self:ShowShopScreen("Joe.Shop.More") end
+	},
 
 	-- Annoyances
 	["Joe.ReadTheSign"] = {
@@ -260,6 +265,47 @@ ENT.ChatLayout = {
 		{face = "smirk", text = "Joe.Spec.3"},
 		function(self) return true end -- close chat
 	},
+	["Joe.Bones.1"] = {
+		{face = "angry", text = "Joe.Bones.2"},
+		{face = "smirk", text = "Joe.Bones.3"},
+		{face = "grin", text = "Joe.Bones.4"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Spray.1"] = {
+		{face = "smirk", text = "Joe.Spray.2"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Spawn.1"] = {
+		{face = "smirk", text = "Joe.Spawn.2"},
+		{face = "annoyed", text = "Joe.Spawn.3"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+
+	-- Hats
+	["Joe.Hat.Cap.1"] = {
+		{face = "smile", text = "Joe.Hat.Cap.2"},
+		{face = "lookside", text = "Joe.Hat.Cap.3"},
+		{face = "smile", text = "Joe.Hat.Cap.4"},
+		{face = "smirk", text = "Joe.Hat.Cap.5"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Hat.Deerstalker.1"] = {
+		{face = "smirk", text = "Joe.Hat.Deerstalker.2"},
+		{face = "neutral", text = "Joe.Hat.Deerstalker.3"},
+		{face = "smirk", text = "Joe.Hat.Deerstalker.4"},
+		{face = "annoyed", text = "Joe.Hat.Deerstalker.5"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Hat.Fedora.1"] = {
+		{face = "smirk", text = "Joe.Hat.Fedora.2"},
+		{face = "neutral", text = "Joe.Hat.Fedora.3"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
+	["Joe.Hat.Other.1"] = {
+		{face = "smirk", text = "Joe.Hat.Other.2"},
+		{face = "smile", text = "Joe.Hat.Other.3"},
+		{face = "smile", text = "Joe.Anyway"}
+	},
 
 	-- Forks
 	["Joe.CR.1"] = {
@@ -278,6 +324,22 @@ ENT.ChatLayout = {
 	}
 }
 
+ENT.ChatPriority = {
+	["Shop"] = 1,
+	["Talk"] = 2,
+
+	["WhoAreYou"] = 1,
+	["Joe.HowsBusiness"] = 2,
+	["Joe.Detective"] = 3,
+	["Joe.MemberCard"] = 4,
+	["Joe.Redeem"] = 4,
+
+	["Joe.ReadTheSign.Yes"] = 1,
+	["Joe.ReadTheSign.No"] = 2,
+	["Joe.ReadTheSign.Sorry"] = 1,
+	["Joe.ReadTheSign.WasntThere"] = 2
+}
+
 ENT.ChatHooks = {
 	["Joe.Talk.2"] = function(self) self.Talked = true end,
 	["Joe.MemberCard.5"] = function(self)
@@ -292,8 +354,17 @@ ENT.ChatHooks = {
 		net.Start("TraitorJoe_SpawnDefib")
 		net.SendToServer()
 	end,
+	["Joe.Final.1"] = function(self)
+		TRAITORJOE.Joe.SellWeapons = true
+	end,
 	["Joe.Final.Good.1"] = function(self)
+		TRAITORJOE.Joe.SellWeapons = true
+
 		net.Start("TraitorJoe_SpawnTrash")
+		net.SendToServer()
+	end,
+	["Joe.Hat.Deerstalker.5"] = function(self)
+		net.Start("TraitorJoe_HatTransfer")
 		net.SendToServer()
 	end
 }
@@ -306,9 +377,32 @@ ENT.AnnoyMessages = {
 	}
 }
 
+local hatResponses = {
+	["models/mall_member/figardo/vending_hat.mdl"] = {face = "grin", text = "Joe.Hat.Cap.1"},
+	["models/mall_member/figardo/deerstalker.mdl"] = {face = "angry", text = "Joe.Hat.Deerstalker.1"},
+	["models/player/mafia_hat_medium.mdl"] = {face = "annoyed", text = "Joe.Hat.Fedora.1"},
+	["other"] = {face = "neutral", text = "Joe.Hat.Other.1"}
+}
+
 function ENT:GetInitialChat()
-	if LocalPlayer():GetObserverMode() != OBS_MODE_NONE then
+	local ply = LocalPlayer()
+
+	if ply:GetObserverMode() != OBS_MODE_NONE then
 		return {face = "annoyed", text = "Joe.Spec.1"}
+	end
+
+	local children = ply:GetChildren()
+	for i = 1, #children do
+		local child = children[i]
+		if child:GetClass() != "tj_hat" then continue end
+
+		local response = hatResponses[child:GetModel()]
+		if !response then response = hatResponses["other"] end
+
+		if response.done then break end
+
+		response.done = true
+		return response
 	end
 
 	local annoyed = self:AnnoyedCheck()

@@ -125,9 +125,15 @@ ENT.ChatLayout = {
 		{text = "Tony.Fire.2"},
 		{text = "Tony.Anyway"}
 	},
-	["Ellipses"] = {
+	["Ellipses"] = { -- tony can't see spectators
 		function() return true end
 	}
+}
+
+ENT.ChatPriority = {
+	["WhoAreYou"] = 1,
+	["Tony.NameChange"] = 2,
+	["Tony.Defib"] = 3
 }
 
 local function WriteOldName(self)

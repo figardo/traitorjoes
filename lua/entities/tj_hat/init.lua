@@ -1,8 +1,8 @@
-if game.GetMap() != "mall_store_size" then return end
-
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
+
+if game.GetMap() != "mall_store_size" then return end
 
 ENT.CanUseKey = true
 
@@ -11,6 +11,8 @@ function ENT:OnRemove()
 end
 
 function ENT:DoAnnoy(ply)
+	if !IsValid(ply) or !ply:IsPlayer() then return end
+
 	local parent = self:GetParent()
 	if !IsValid(parent) or !parent.Annoy then return end
 

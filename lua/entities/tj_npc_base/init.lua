@@ -1,8 +1,8 @@
-if game.GetMap() != "mall_store_size" then return end
-
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
+
+if game.GetMap() != "mall_store_size" then return end
 
 util.AddNetworkString("TraitorJoe_Physgunned")
 
@@ -56,6 +56,16 @@ function ENT:Think()
 		end
 	else
 		self.FireCheck = false
+	end
+
+	if self:HasBoneManipulations() then
+		if !self.BoneCheck then
+			self:Annoy(ANNOY_BONES)
+
+			self.BoneCheck = true
+		end
+	else
+		self.BoneCheck = false
 	end
 
 	-- Make sure the animation is smooth

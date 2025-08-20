@@ -11,8 +11,11 @@ ENT.ShopErrors = {
 	Credits = false,
 	Limited = false,
 	Owned = {},
-	Sandbox = false
+	Sandbox = false,
+	Slot = false
 }
+
+local function CanCarryWeapon(kind) return LocalPlayer():CanCarryType(kind) end
 
 local fieldstbl = {"name", "type", "desc"}
 
@@ -31,12 +34,12 @@ function ENT:PreqLabels(parent, x, y)
 		local ply = LocalPlayer()
 
 		local credits = ply:GetCredits()
-		if credits <= 0 then
+		if !sel.free and credits <= 0 then
 			return false, !self.ShopErrors.Credits, GetPTranslation("equip_cost", {num = credits})
 		end
 
 		local isWeapon = isstring(sel.id)
-		if isWeapon and ply:HasWeapon(sel.id) then
+		if isWeapon and (ply:HasWeapon(sel.id) or (engine.ActiveGamemode() == "terrortown" and !CanCarryWeapon(sel.kind))) then
 			return false, !self.ShopErrors.Owned[sel.id], GetPTranslation("equip_carry_slot", {slot = sel.slot})
 		elseif !isWeapon and LocalPlayer().HasEquipmentItem and LocalPlayer():HasEquipmentItem(sel.id) then
 			return false, !self.ShopErrors.Owned[sel.id], GetTranslation("equip_carry_own")
@@ -113,8 +116,11 @@ function ENT:ShowShopScreen(chatOverride)
 
 
 	local items = self.EquipmentItems
+	local canSellWeapons = TRAITORJOE.Joe.SellWeapons
 
-	for k, item in pairs(items) do
+	for k, item in ipairs(items) do
+		if item.free and !canSellWeapons then continue end
+
 		local ic = nil
 		local isWeapon = isstring(item.id)
 
@@ -157,12 +163,12 @@ function ENT:ShowShopScreen(chatOverride)
 		ic:SetTooltip(tip)
 
 		-- If we cannot order this item, darken it
-		if !can_order or
+		if (!item.free and !can_order) or
 			-- already owned
 			(self.ShopErrors.Owned[item.id] and
-			(tonumber(item.id) and ply:HasEquipmentItem(tonumber(item.id)) or table.HasValue(owned_ids, item.id))) then
-		-- 	-- already carrying a weapon for this slot
-		-- 	(self.ShopErrors.Slot and isWeapon and !CanCarryWeapon(item)) then
+			(tonumber(item.id) and ply:HasEquipmentItem(tonumber(item.id)) or table.HasValue(owned_ids, item.id))) or
+			-- already carrying a weapon for this slot
+			(engine.ActiveGamemode() == "terrortown" and self.ShopErrors.Slot and isWeapon and !CanCarryWeapon(item.kind)) then
 
 			ic:SetIconColor(color_darkened)
 		end
@@ -287,9 +293,11 @@ function ENT:ShowShopScreen(chatOverride)
 		local pnl = dlist.SelectedPanel
 		if !pnl or !pnl.item then return end
 
+		local item = pnl.item
+
 		dframe:Close()
 
-		if ply:GetCredits() == 0 then
+		if !item.free and ply:GetCredits() == 0 then
 			self.ShopErrors.Credits = true
 
 			if engine.ActiveGamemode() == "terrortown" then
@@ -299,7 +307,7 @@ function ENT:ShowShopScreen(chatOverride)
 			end
 		end
 
-		local id = pnl.item.id
+		local id = item.id
 		if tonumber(id) then
 			if ply:HasEquipmentItem(id) then
 				self.ShopErrors.Owned[id] = true
@@ -310,6 +318,9 @@ function ENT:ShowShopScreen(chatOverride)
 		elseif ply:HasWeapon(id) then
 			self.ShopErrors.Owned[id] = true
 			return self:ShowChatScreen({face = "grin", text = "Joe.Shop.NoSpace.1"})
+		elseif engine.ActiveGamemode() == "terrortown" and !CanCarryWeapon(item.kind) then
+			self.ShopErrors.Slot = true
+			return self:ShowChatScreen({face = "neutral", text = "Joe.Shop.SlotFilled.1"})
 		end
 
 		local choice = pnl.idx
@@ -317,7 +328,7 @@ function ENT:ShowShopScreen(chatOverride)
 			net.WriteUInt(choice, 5)
 		net.SendToServer()
 
-		if engine.ActiveGamemode() != "terrortown" and !self.ShopErrors.Sandbox then
+		if !item.free and engine.ActiveGamemode() != "terrortown" and !self.ShopErrors.Sandbox then
 			self.ShopErrors.Sandbox = true
 			return self:ShowChatScreen({face = "grin", text = "Joe.Shop.Sandbox.1"})
 		end

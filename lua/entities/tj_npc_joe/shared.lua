@@ -181,5 +181,93 @@ ENT.EquipmentItems = {
 		kind = 6,
 		limited = true,
 		chat = {face = "smirk", text = "Joe.Shop.Item.HStation"}
+	},
+	{
+		name = "MAC10",
+		id = "weapon_zm_mac10",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_mac",
+		type = "item_weapon",
+		slot = 3,
+		kind = 3,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+	},
+	{
+		name = "M16",
+		id = "weapon_ttt_m16",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_m16",
+		type = "item_weapon",
+		slot = 3,
+		kind = 3,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+	},
+	{
+		name = "rifle_name",
+		id = "weapon_zm_rifle",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_scout",
+		type = "item_weapon",
+		slot = 3,
+		kind = 3,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+	},
+	{
+		name = "shotgun_name",
+		id = "weapon_zm_shotgun",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_shotgun",
+		type = "item_weapon",
+		slot = 3,
+		kind = 3,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+	},
+	{
+		name = "H.U.G.E-249",
+		id = "weapon_zm_sledge",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_m249",
+		type = "item_weapon",
+		slot = 3,
+		kind = 3,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+	},
+	{
+		name = "pistol_name",
+		id = "weapon_zm_pistol",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_pistol",
+		type = "item_weapon",
+		slot = 2,
+		kind = 2,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+	},
+	{
+		name = "Deagle",
+		id = "weapon_zm_revolver",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_deagle",
+		type = "item_weapon",
+		slot = 2,
+		kind = 2,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+	},
+	{
+		name = "Glock",
+		id = "weapon_ttt_glock",
+		desc = "ump_desc",
+		material = "mall_member/figardo/icon_glock",
+		type = "item_weapon",
+		slot = 2,
+		kind = 2,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
 	}
 }
