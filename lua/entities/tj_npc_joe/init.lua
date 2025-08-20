@@ -17,6 +17,7 @@ util.AddNetworkString("TraitorJoe_ApplyForMembership")
 util.AddNetworkString("TraitorJoe_Redeem")
 util.AddNetworkString("TraitorJoe_SpawnTrash")
 util.AddNetworkString("TraitorJoe_SpawnDefib")
+util.AddNetworkString("TraitorJoe_HatTransfer")
 
 function ENT:Think()
 	BaseClass.Think(self)
@@ -43,9 +44,10 @@ end
 
 local prizeThreshold = 5
 function ENT:BuyItem(ply, id)
-	if ply:GetCredits() <= 0 then return end
-
 	local item = self.EquipmentItems[id]
+
+	if !item.free and ply:GetCredits() <= 0 then return end
+
 	if isnumber(item.id) then
 		if !ply:GiveEquipmentItem(item.id) then return end
 	else
@@ -54,7 +56,9 @@ function ENT:BuyItem(ply, id)
 		ply:Give(item.id)
 	end
 
-	ply:SubtractCredits(1)
+	if !item.free then
+		ply:SubtractCredits(1)
+	end
 
 	local sid = ply:SteamID64()
 	if TRAITORJOE.Joe.Members[sid] then

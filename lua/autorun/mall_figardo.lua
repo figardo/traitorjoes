@@ -414,10 +414,6 @@ if engine.ActiveGamemode() != "terrortown" then
 			chat.AddText(LANG.GetTranslation(net.ReadString()))
 		end)
 
-		net.Receive("TraitorJoe_BuyItem", function()
-			TRAITORJOE.Joe.ItemsBought = net.ReadUInt(3)
-		end)
-
 		hook.Add("HUDDrawTargetID", "TraitorJoesDisguiserFunction", function()
 			local tr = util.GetPlayerTrace(LocalPlayer())
 			local trace = util.TraceLine(tr)
@@ -1036,6 +1032,8 @@ local function ShowEmailScreen(self)
 					edata.pnl = pnl
 
 					if edata.att then
+						TRAITORJOE.Base.Att = true
+
 						sndpnl = vgui.Create("DButton", textpnl)
 						sndpnl:SetPos(0, (th * 3) + sidePadding)
 						sndpnl:SetSize(wide * 0.35, pnl:GetTall() * 0.03)
@@ -1429,6 +1427,18 @@ if SERVER then
 		SpawnOnTarget("weapon_ttt_tj_defib", TRAITORJOE.DefibSpawn)
 	end)
 
+	net.Receive("TraitorJoe_HatTransfer", function(_, ply)
+		local hat = ply.hat
+		if !IsValid(hat) or hat:GetParent() != ply then return end
+
+		hat:Drop()
+
+		local joe = TRAITORJOE.Joe.Entity
+		if joe.hat then return end
+
+		hat:UseOverride(joe)
+	end)
+
 	net.Receive("TraitorJoe_TonyDefib", function(_, ply)
 		if !IsMounted("treason") then
 			error("Player " .. ply:Nick() .. " tried to abuse Tony's good will when Treason isn't mounted.")
@@ -1539,6 +1549,10 @@ else
 		if !IsValid(ent) or !ent.Annoy then return end
 
 		ent:Annoy(annoyance)
+	end)
+
+	net.Receive("TraitorJoe_BuyItem", function()
+		TRAITORJOE.Joe.ItemsBought = net.ReadUInt(3)
 	end)
 
 	hook.Add("PlayerBindPress", "TraitorJoesMagicUseKey", function(ply, bind, pressed)
