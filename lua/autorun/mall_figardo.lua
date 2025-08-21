@@ -1426,7 +1426,10 @@ if SERVER then
 			if !IsValid(ent:GetOwner()) then return end -- if there's already a defib on the floor then don't bother spawning another
 		end
 
-		SpawnOnTarget("weapon_ttt_tj_defib", TRAITORJOE.DefibSpawn)
+		local spawn = TRAITORJOE.DefibSpawn
+		spawn:EmitSound("physics/glass/glass_largesheet_break3.wav")
+
+		SpawnOnTarget("weapon_ttt_tj_defib", spawn)
 	end)
 
 	net.Receive("TraitorJoe_SpawnBin", function(_, ply)
