@@ -1372,6 +1372,12 @@ if SERVER then
 
 				continue
 			end
+
+			if name == "tj_bin_spawn" then
+				TRAITORJOE.BinSpawn = ent
+
+				continue
+			end
 		end
 	end)
 
@@ -1425,6 +1431,14 @@ if SERVER then
 		end
 
 		SpawnOnTarget("weapon_ttt_tj_defib", TRAITORJOE.DefibSpawn)
+	end)
+
+	net.Receive("TraitorJoe_SpawnBin", function(_, ply)
+		for _, ent in ents.Iterator() do
+			if ent:GetClass() == "tj_bin" then return end -- if there's already a bin then don't bother spawning another
+		end
+
+		SpawnOnTarget("tj_bin", TRAITORJOE.BinSpawn)
 	end)
 
 	net.Receive("TraitorJoe_HatTransfer", function(_, ply)

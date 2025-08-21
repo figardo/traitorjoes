@@ -360,7 +360,7 @@ ENT.ChatHooks = {
 	["Joe.Final.Good.1"] = function(self)
 		TRAITORJOE.Joe.SellWeapons = true
 
-		net.Start("TraitorJoe_SpawnTrash")
+		net.Start("TraitorJoe_SpawnBin")
 		net.SendToServer()
 	end,
 	["Joe.Hat.Deerstalker.5"] = function(self)

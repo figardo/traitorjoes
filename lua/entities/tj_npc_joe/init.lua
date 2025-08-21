@@ -15,7 +15,7 @@ ENT.HatShouldBoneMerge = true
 util.AddNetworkString("TraitorJoe_BuyItem")
 util.AddNetworkString("TraitorJoe_ApplyForMembership")
 util.AddNetworkString("TraitorJoe_Redeem")
-util.AddNetworkString("TraitorJoe_SpawnTrash")
+util.AddNetworkString("TraitorJoe_SpawnBin")
 util.AddNetworkString("TraitorJoe_SpawnDefib")
 util.AddNetworkString("TraitorJoe_HatTransfer")
 

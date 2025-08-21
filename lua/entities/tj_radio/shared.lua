@@ -4,5 +4,3 @@ ENT.Type = "anim"
 ENT.Base = "base_anim"
 ENT.PrintName = "Webradio (Simple)"
 ENT.Author = "Flowx"
-ENT.Spawnable = true
-ENT.Category = "Audio Equipment"
