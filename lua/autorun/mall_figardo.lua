@@ -1221,9 +1221,7 @@ if SERVER then
 			end
 
 			if IsValid(self.Radio) then
-				net.Start("TraitorJoe_Radio")
-					net.WriteBool(false)
-				net.Broadcast()
+				self.Radio:StopRadio()
 			else
 				for _, ent in ents.Iterator() do
 					if ent:GetName() != "tj_radio_spawn" then continue end
@@ -1236,9 +1234,7 @@ if SERVER then
 				end
 			end
 		else
-			net.Start("TraitorJoe_Radio")
-				net.WriteBool(true)
-			net.Broadcast()
+			self.Radio:PlayRadio()
 		end
 	end
 

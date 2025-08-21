@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8870"
-	"mapversion" "300"
+	"mapversion" "301"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -89,7 +89,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "300"
+	"mapversion" "301"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -26559,27 +26559,6 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 2500]"
-	}
-}
-entity
-{
-	"id" "22880"
-	"classname" "point_worldtext"
-	"angles" "-0 90 0"
-	"color" "255 255 255 255"
-	"message" "Radio song is temporary"
-	"orientation" "0"
-	"rainbow" "0"
-	"textsize" "3"
-	"textspacingX" "0"
-	"textspacingY" "0"
-	"origin" "132 134 -496"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 -11268]"
 	}
 }
 entity
