@@ -261,6 +261,7 @@ if engine.ActiveGamemode() != "terrortown" then
 			"ttt_firegrenade_proj",
 			"ttt_flame",
 			"ttt_health_station",
+			"ttt_knife_proj",
 			"ttt_physhammer",
 			"ttt_radio",
 			"ttt_smokegrenade_proj"
