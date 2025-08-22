@@ -1,8 +1,8 @@
 "LightmappedGeneric"
 {
-	"$basetexture" 			"wood\houseceiling01"
+	"$basetexture" 			"mall_member\figardo\houseceiling01"
 	"$surfaceprop" 			"wood"
-	"$bumpmap"				"wood\houseceiling01-ssbump"
+	"$bumpmap"				"mall_member\figardo\houseceiling01-ssbump"
 	"$ssbump"				"1"
 //	"$ssbumpmathfix"		"1"
 	

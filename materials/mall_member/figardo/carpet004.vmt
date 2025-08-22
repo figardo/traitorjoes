@@ -1,0 +1,6 @@
+LightmappedGeneric
+{
+    $baseTexture "mall_member/figardo/carpet004"
+    $surfaceprop carpet
+    "%keywords" l4d2
+}
