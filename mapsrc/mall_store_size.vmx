@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8870"
-	"mapversion" "301"
+	"mapversion" "302"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -89,7 +89,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "301"
+	"mapversion" "302"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -753,7 +753,7 @@ world
 				"v" "-220 416 -364"
 				"v" "220 416 -364"
 			}
-			"material" "PLASTER/PLASTER_INT_12"
+			"material" "MALL_MEMBER/FIGARDO/PLASTER_INT_12"
 			"uaxis" "[-1 -0 0 272] 0.25"
 			"vaxis" "[0 -0 -1 -324.013] 0.2344"
 			"rotation" "0"
@@ -1207,7 +1207,7 @@ world
 				"v" "-112 304 -556"
 				"v" "218 304 -556"
 			}
-			"material" "PLASTER/PLASTER_INT_12"
+			"material" "MALL_MEMBER/FIGARDO/PLASTER_INT_12"
 			"uaxis" "[1 0 0 -96] 0.25"
 			"vaxis" "[-0 0 -1 -324.013] 0.2344"
 			"rotation" "0"
@@ -3849,7 +3849,7 @@ world
 				"v" "220 416 -556"
 				"v" "220 296 -556"
 			}
-			"material" "BUILDINGS/CARPET004"
+			"material" "MALL_MEMBER/FIGARDO/CARPET004"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
 			"rotation" "0"
@@ -4139,7 +4139,7 @@ world
 				"v" "-218 288 -364"
 				"v" "-218 416 -364"
 			}
-			"material" "PLASTER/PLASTER_INT_12"
+			"material" "MALL_MEMBER/FIGARDO/PLASTER_INT_12"
 			"uaxis" "[0 -1 0 248] 0.25"
 			"vaxis" "[0 0 -1 -324.013] 0.2344"
 			"rotation" "0"
@@ -4357,7 +4357,7 @@ world
 				"v" "218 416 -364"
 				"v" "218 288 -364"
 			}
-			"material" "PLASTER/PLASTER_INT_12"
+			"material" "MALL_MEMBER/FIGARDO/PLASTER_INT_12"
 			"uaxis" "[-0 1 0 -216] 0.25"
 			"vaxis" "[-0 0 -1 -324.014] 0.2344"
 			"rotation" "0"
@@ -4747,7 +4747,7 @@ world
 				"v" "-218 304 -556"
 				"v" "-176 304 -556"
 			}
-			"material" "PLASTER/PLASTER_INT_12"
+			"material" "MALL_MEMBER/FIGARDO/PLASTER_INT_12"
 			"uaxis" "[1 0 0 -96] 0.25"
 			"vaxis" "[-0 0 -1 -324.013] 0.2344"
 			"rotation" "0"
@@ -4865,7 +4865,7 @@ world
 				"v" "-176 304 -452"
 				"v" "-112 304 -452"
 			}
-			"material" "PLASTER/PLASTER_INT_12"
+			"material" "MALL_MEMBER/FIGARDO/PLASTER_INT_12"
 			"uaxis" "[1 0 0 -96] 0.25"
 			"vaxis" "[-0 0 -1 -324.013] 0.2344"
 			"rotation" "0"

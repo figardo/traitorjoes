@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8870"
-	"mapversion" "302"
+	"mapversion" "303"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -89,7 +89,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "302"
+	"mapversion" "303"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -26577,6 +26577,35 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "23532"
+	"classname" "info_overlay"
+	"angles" "0 135 0"
+	"BasisNormal" "0 0 -1"
+	"BasisOrigin" "97 -191 -540"
+	"BasisU" "-0.707107 0.707107 0"
+	"BasisV" "0.707107 0.707107 0"
+	"EndU" "0"
+	"EndV" "1"
+	"fademindist" "-1"
+	"material" "mall_member/figardo/chet"
+	"sides" "24895"
+	"StartU" "1"
+	"StartV" "0"
+	"uv0" "-2.79547 -2.92151 0"
+	"uv1" "-2.79547 2.92151 0"
+	"uv2" "2.79547 2.92151 0"
+	"uv3" "2.79547 -2.92151 0"
+	"origin" "97 -191 -540"
+	editor
+	{
+		"color" "80 150 225"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 500]"
 	}
 }
 cameras
