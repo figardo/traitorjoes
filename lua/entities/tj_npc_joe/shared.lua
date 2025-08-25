@@ -182,92 +182,160 @@ ENT.EquipmentItems = {
 		limited = true,
 		chat = {face = "smirk", text = "Joe.Shop.Item.HStation"}
 	},
+
+	-- Weapons
 	{
 		name = "MAC10",
 		id = "weapon_zm_mac10",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.MAC10",
 		material = "mall_member/figardo/icon_mac",
 		type = "item_weapon",
 		slot = 3,
 		kind = 3,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "lookside", text = "Joe.Shop.Item.MAC10"}
 	},
 	{
 		name = "M16",
 		id = "weapon_ttt_m16",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.M16",
 		material = "mall_member/figardo/icon_m16",
 		type = "item_weapon",
 		slot = 3,
 		kind = 3,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "grin", text = "Joe.Shop.Item.M16"}
 	},
 	{
 		name = "rifle_name",
 		id = "weapon_zm_rifle",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.Rifle",
 		material = "mall_member/figardo/icon_scout",
 		type = "item_weapon",
 		slot = 3,
 		kind = 3,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "smile", text = "Joe.Shop.Item.Rifle"}
 	},
 	{
 		name = "shotgun_name",
 		id = "weapon_zm_shotgun",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.Shotgun",
 		material = "mall_member/figardo/icon_shotgun",
 		type = "item_weapon",
 		slot = 3,
 		kind = 3,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "smirk", text = "Joe.Shop.Item.Shotgun"}
 	},
 	{
 		name = "H.U.G.E-249",
 		id = "weapon_zm_sledge",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.HUGE",
 		material = "mall_member/figardo/icon_m249",
 		type = "item_weapon",
 		slot = 3,
 		kind = 3,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "lookside", text = "Joe.Shop.Item.HUGE"}
 	},
 	{
 		name = "pistol_name",
 		id = "weapon_zm_pistol",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.Pistol",
 		material = "mall_member/figardo/icon_pistol",
 		type = "item_weapon",
 		slot = 2,
 		kind = 2,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "annoyed", text = "Joe.Shop.Item.Pistol"}
 	},
 	{
 		name = "Deagle",
 		id = "weapon_zm_revolver",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.Deagle",
 		material = "mall_member/figardo/icon_deagle",
 		type = "item_weapon",
 		slot = 2,
 		kind = 2,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "neutral", text = "Joe.Shop.Item.Deagle"}
 	},
 	{
 		name = "Glock",
 		id = "weapon_ttt_glock",
-		desc = "ump_desc",
+		desc = "#TraitorJoes.Shop.Glock",
 		material = "mall_member/figardo/icon_glock",
 		type = "item_weapon",
 		slot = 2,
 		kind = 2,
 		free = true,
-		chat = {face = "smirk", text = "Joe.Shop.Item.UMP"}
+		chat = {face = "smirk", text = "Joe.Shop.Item.Glock"}
+	},
+	{
+		name = "grenade_fire",
+		id = "weapon_zm_molotov",
+		desc = "#TraitorJoes.Shop.Incendiary",
+		material = "mall_member/figardo/icon_incendiary",
+		type = "item_weapon",
+		slot = 2,
+		kind = 2,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.Incendiary"}
+	},
+	{
+		name = "confgrenade_name",
+		id = "weapon_ttt_confgrenade",
+		desc = "#TraitorJoes.Shop.Discomb",
+		material = "mall_member/figardo/icon_discomb",
+		type = "item_weapon",
+		slot = 2,
+		kind = 2,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.Discomb"}
+	},
+	{
+		name = "grenade_smoke",
+		id = "weapon_ttt_smokegrenade",
+		desc = "#TraitorJoes.Shop.Smoke",
+		material = "mall_member/figardo/icon_smoke",
+		type = "item_weapon",
+		slot = 2,
+		kind = 2,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.Smoke"}
+	},
+	{
+		name = "crowbar_name",
+		id = "weapon_zm_improvised",
+		desc = "#TraitorJoes.Shop.Crowbar",
+		material = "mall_member/figardo/icon_cbar",
+		type = "item_weapon",
+		slot = 1,
+		kind = 1,
+		free = true,
+		chat = {face = "smirk", text = "Joe.Shop.Item.Crowbar"}
+	},
+	{
+		name = "magnet_name",
+		id = "weapon_zm_carry",
+		desc = "#TraitorJoes.Shop.Magneto",
+		material = "mall_member/figardo/icon_magneto",
+		type = "item_weapon",
+		slot = 2,
+		kind = 2,
+		free = true,
+		chat = {face = "annoyed", text = "Joe.Shop.Item.Magneto"}
+	},
+	{
+		name = "unarmed_name",
+		id = "weapon_ttt_unarmed",
+		desc = "#TraitorJoes.Shop.Unarmed",
+		material = "mall_member/figardo/icon_unarmed",
+		type = "item_weapon",
+		slot = 6,
+		kind = -1,
+		free = true,
+		chat = {face = "neutral", text = "Joe.Shop.Item.Unarmed"}
 	}
 }
