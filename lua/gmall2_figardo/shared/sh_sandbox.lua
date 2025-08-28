@@ -66,6 +66,10 @@ end
 
 function GetRoundState() return 3 end -- ROUND_ACTIVE
 
+function IsPlayer(ent)
+	return ent and ent:IsValid() and ent:IsPlayer()
+end
+
 function Key(binding, default)
 	local b = input.LookupBinding(binding)
 	if !b then return default end

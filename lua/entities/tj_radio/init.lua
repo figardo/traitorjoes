@@ -13,7 +13,7 @@ function ENT:Initialize()
 end
 
 function ENT:OnTakeDamage(dmginfo)
-	self:GibBreakServer(dmginfo:GetDamageForce())
+	self:GibBreakClient(dmginfo:GetDamageForce())
 
 	TRAITORJOE.SendAnnoyance(ANNOY_RADIO, nil, "tj_npc_joe")
 

@@ -117,7 +117,7 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 				break
 			end
 		end
-	else
+	elseif IsValid(self.Radio) then
 		self.Radio:PlayRadio()
 	end
 end
