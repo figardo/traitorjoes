@@ -1,11 +1,12 @@
-if game.GetMap() != "mall_store_size" then return end
-
 DEFINE_BASECLASS("tj_npc_base")
 
 AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("cl_shop.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
+
+if game.GetMap() != "mall_store_size" then return end
+
+AddCSLuaFile("cl_shop.lua")
 
 ENT.Model = Model("models/player/phoenix.mdl")
 ENT.Anim = "idle_all_01"

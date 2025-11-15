@@ -1,6 +1,7 @@
+ENT.Base = "tj_npc_base"
+
 if game.GetMap() != "mall_store_size" then return end
 
-ENT.Base = "tj_npc_base"
 ENT.TJGlobalName = "Joe"
 
 ENT.EquipmentItems = {

@@ -1,7 +1,8 @@
+include("shared.lua")
+
 if game.GetMap() != "mall_store_size" then return end
 
 include("cl_shop.lua")
-include("shared.lua")
 
 ENT.PrintName = "Traitor Joe"
 ENT.FaceFolder = "joe"
