@@ -97,9 +97,14 @@ function ENT:UseOverride(ply)
 
 	sound.Play("weapon.ImpactSoft", self:GetPos(), 75, 100, 1)
 
-	self:SetMoveType(MOVETYPE_NONE)
-	self:SetSolid(SOLID_NONE)
-	self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	if ply:IsPlayer() then
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetSolid(SOLID_NONE)
+		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	else
+		self:SetSolid(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+	end
 
 	self:SetParent(ply)
 	self.Wearer = ply

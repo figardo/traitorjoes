@@ -365,6 +365,8 @@ ENT.ChatHooks = {
 		net.SendToServer()
 	end,
 	["Joe.Hat.Deerstalker.5"] = function(self)
+		self:EnableHat(true)
+
 		net.Start("TraitorJoe_HatTransfer")
 		net.SendToServer()
 	end
@@ -403,6 +405,7 @@ function ENT:GetInitialChat()
 		if response.done then break end
 
 		response.done = true
+		TRAITORJOE[self.TJGlobalName].Annoyances.Queue = {}
 		return response
 	end
 

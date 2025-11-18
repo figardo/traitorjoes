@@ -330,12 +330,13 @@ net.Receive("TraitorJoe_HatTransfer", function(_, ply)
 	local hat = ply.hat
 	if !IsValid(hat) or hat:GetParent() != ply then return end
 
-	hat:Drop()
+	hat:Remove()
+	ply.hat = nil
 
 	local joe = TRAITORJOE.Joe.Entity
 	if joe.hat then return end
 
-	hat:UseOverride(joe)
+	joe:SpawnHat()
 end)
 
 net.Receive("TraitorJoe_TonyDefib", function(_, ply)

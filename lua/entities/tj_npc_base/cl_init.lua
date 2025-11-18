@@ -120,6 +120,11 @@ function ENT:SetFace(face)
 	dface:SetFace(self.FaceFolder, face)
 end
 
+function ENT:EnableHat(enabled)
+	dface.Hat = enabled and self.HatTexture
+	dface.HatWidthOverride = enabled and self.HatWidthOverride
+end
+
 function ENT:ChatToString(str)
 	if !str then
 		ErrorNoHaltWithStack("Chat string is nil.")
@@ -185,8 +190,7 @@ function ENT:ShowChatScreen(chatOverride)
 	for _, ent in ipairs(self:GetChildren()) do
 		if ent:GetClass() != "tj_hat" then continue end
 
-		dface.Hat = self.HatTexture
-		dface.HatWidthOverride = self.HatWidthOverride
+		self:EnableHat(true)
 		break
 	end
 
