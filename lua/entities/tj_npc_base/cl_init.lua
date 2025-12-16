@@ -164,7 +164,7 @@ function ENT:ShowChatScreen(chatOverride)
 	dframe.OnKeyCodePressed = util.BasicKeyHandler
 	self.ChatPanel = dframe
 
-	function dframe:OnRemove()
+	function dframe.OnRemove(s)
 		self.ChatResponse = nil
 	end
 
