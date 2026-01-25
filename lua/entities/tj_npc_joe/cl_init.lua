@@ -26,32 +26,9 @@ local function talkMenu()
 		{face = "smirk", text = "Joe.WhoAreYou.6"}
 	}
 
-	tbl["Joe.HowsBusiness"] = {
-		{face = "neutral", text = "Joe.HowsBusiness.1"},
-		{face = "smile", text = "Joe.HowsBusiness.2"},
-		{face = "grin", text = "Joe.HowsBusiness.3"},
-		{face = "smile", text = "Joe.HowsBusiness.4"},
-		{face = "neutral", text = "Joe.HowsBusiness.5"},
-		{face = "lookside", text = "Joe.HowsBusiness.6"},
-		{face = "smirk", text = "Joe.HowsBusiness.7"},
-		{face = "neutral", text = "Joe.HowsBusiness.8"},
-		{face = "lookside", text = "Joe.HowsBusiness.9"},
-		{face = "annoyed", text = "Joe.HowsBusiness.10"},
-		{face = "lookside", text = "Joe.HowsBusiness.11"},
-		{face = "smirk", text = "Joe.HowsBusiness.12"},
-		{face = "grin", text = "Joe.HowsBusiness.13"},
-		{face = "smile", text = "Joe.HowsBusiness.14"}
+	tbl["Joe.AboutThisPlace"] = {
+		{face = "neutral", text = "Joe.AboutThisPlace.1"}
 	}
-
-	if LocalPlayer():IsListenServerHost() and !IsMounted("treason") then
-		table.Add(tbl["Joe.HowsBusiness"], {
-			{face = "neutral", text = "Joe.HowsBusiness.NoTony.1"},
-			{face = "lookside", text = "Joe.HowsBusiness.NoTony.2"},
-			{face = "smirk", text = "Joe.HowsBusiness.NoTony.3"}
-		})
-	else
-		table.insert(tbl["Joe.HowsBusiness"], {face = "smirk", text = "Joe.HowsBusiness.Tony"})
-	end
 
 	tbl["Joe.Detective"] = {
 		function(self) return self:GetAnnoyed(ANNOY_HAT) and {face = "annoyed", text = "Joe.Detective.Shot.1"} or {face = "neutral", text = "Joe.Detective.1"} end
@@ -88,6 +65,80 @@ local function talkMenu()
 	return tbl
 end
 
+local function placeMenu()
+	local tbl = {}
+
+	tbl["Joe.WhyMove"] = {
+		{face = "smile", text = "Joe.WhyMove.1"},
+		{face = "neutral", text = "Joe.WhyMove.2"},
+		{face = "lookside", text = "Joe.WhyMove.3"},
+		{face = "annoyed", text = "Joe.WhyMove.4"},
+		{face = "smirk", text = "Joe.WhyMove.5"},
+		{face = "grin", text = "Joe.WhyMove.6"},
+		{face = "smile", text = "Joe.WhyMove.7"},
+	}
+
+	if engine.ActiveGamemode() == "sandbox" then
+		table.Add(tbl["Joe.WhyMove"], {
+			{face = "grin", text = "Joe.WhyMove.Sandbox.1"},
+			{face = "smirk", text = "Joe.WhyMove.Sandbox.2"}
+		})
+	elseif engine.ActiveGamemode() == "terrortown" then
+		table.Add(tbl["Joe.WhyMove"], {
+			{face = "neutral", text = "Joe.WhyMove.TTT.1"},
+			{face = "smirk", text = "Joe.WhyMove.TTT.2"}
+		})
+	else
+		table.Add(tbl["Joe.WhyMove"], {
+			{face = "smile", text = "Joe.WhyMove.Other.1"},
+			{face = "neutral", text = "Joe.WhyMove.Other.2"}
+		})
+	end
+
+	tbl["Joe.HowsBusiness"] = {
+		{face = "neutral", text = "Joe.HowsBusiness.1"},
+		{face = "smile", text = "Joe.HowsBusiness.2"},
+		{face = "grin", text = "Joe.HowsBusiness.3"},
+		{face = "smile", text = "Joe.HowsBusiness.4"},
+		{face = "neutral", text = "Joe.HowsBusiness.5"},
+		{face = "lookside", text = "Joe.HowsBusiness.6"},
+		{face = "smirk", text = "Joe.HowsBusiness.7"},
+		{face = "neutral", text = "Joe.HowsBusiness.8"},
+		{face = "lookside", text = "Joe.HowsBusiness.9"},
+		{face = "annoyed", text = "Joe.HowsBusiness.10"},
+		{face = "lookside", text = "Joe.HowsBusiness.11"},
+		{face = "smirk", text = "Joe.HowsBusiness.12"},
+		{face = "grin", text = "Joe.HowsBusiness.13"},
+		{face = "smile", text = "Joe.HowsBusiness.14"}
+	}
+
+	tbl["Joe.SeemsFamiliar"] = {
+		{face = "angry", text = "Joe.SeemsFamiliar.1"},
+		{face = "annoyed", text = "Joe.SeemsFamiliar.2"},
+		{face = "neutral", text = "Joe.SeemsFamiliar.3"},
+		{face = "lookside", text = "Joe.SeemsFamiliar.4"},
+		{face = "annoyed", text = "Joe.SeemsFamiliar.5"},
+		{face = "angry", text = "Joe.SeemsFamiliar.6"},
+		{face = "annoyed", text = "Joe.SeemsFamiliar.7"},
+		{face = "neutral", text = "Joe.SeemsFamiliar.8"},
+		{face = "lookside", text = "Joe.SeemsFamiliar.9"},
+		{face = "lookside", text = "Joe.SeemsFamiliar.10"},
+		{face = "smirk", text = "Joe.SeemsFamiliar.11"}
+	}
+
+	if LocalPlayer():IsListenServerHost() and !IsMounted("treason") then
+		table.Add(tbl["Joe.HowsBusiness"], {
+			{face = "neutral", text = "Joe.HowsBusiness.NoTony.1"},
+			{face = "lookside", text = "Joe.HowsBusiness.NoTony.2"},
+			{face = "smirk", text = "Joe.HowsBusiness.NoTony.3"}
+		})
+	else
+		table.insert(tbl["Joe.HowsBusiness"], {face = "smirk", text = "Joe.HowsBusiness.Tony"})
+	end
+
+	return tbl
+end
+
 ENT.ChatLayout = {
 	-- Welcome
 	["Joe.Welcome.1"] = {
@@ -104,8 +155,13 @@ ENT.ChatLayout = {
 	["Joe.Talk.2"] = talkMenu,
 	["Joe.Talk.Short"] = talkMenu,
 	["Joe.WhoAreYou.6"] = talkMenu,
+	["Joe.AboutThisPlace.1"] = placeMenu,
+	["Joe.WhyMove.Sandbox.2"] = talkMenu,
+	["Joe.WhyMove.TTT.2"] = talkMenu,
+	["Joe.WhyMove.Other.2"] = talkMenu,
 	["Joe.HowsBusiness.Tony"] = talkMenu,
 	["Joe.HowsBusiness.NoTony.3"] = talkMenu,
+	["Joe.SeemsFamiliar.11"] = talkMenu,
 	["Joe.Detective.Shot.1"] = {
 		{face = "lookside", text = "Joe.Detective.Shot.2"},
 		{face = "neutral", text = "Joe.Detective.1"}
@@ -330,10 +386,14 @@ ENT.ChatPriority = {
 	["Talk"] = 2,
 
 	["WhoAreYou"] = 1,
-	["Joe.HowsBusiness"] = 2,
+	["Joe.AboutThisPlace"] = 2,
 	["Joe.Detective"] = 3,
 	["Joe.MemberCard"] = 4,
 	["Joe.Redeem"] = 4,
+
+	["Joe.WhyMove"] = 1,
+	["Joe.HowsBusiness"] = 2,
+	["Joe.SeemsFamiliar"] = 3,
 
 	["Joe.ReadTheSign.Yes"] = 1,
 	["Joe.ReadTheSign.No"] = 2,
