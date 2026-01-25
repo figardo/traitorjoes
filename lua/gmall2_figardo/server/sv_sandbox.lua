@@ -35,40 +35,37 @@ local function RadarScan(ply, cmd, args)
 		return
 	end
 
-	ply.radar_charge =  CurTime() + chargetime
-
-	local scan_ents = player.GetAll()
-	table.Add(scan_ents, ents.FindByClass("ttt_decoy"))
+	ply.radar_charge = CurTime() + chargetime
 
 	local targets = {}
-	for k, p in ipairs(scan_ents) do
-		if ply == p or !IsValid(p) then continue end
+	for k, p in player.Iterator() do
+		if ply == p or !IsValid(p) or !p:IsTerror() then continue end
 
-		if p:IsPlayer() then
-			if !p:IsTerror() then continue end
-			if p:GetNWBool("disguised", false) and !ply:IsTraitor() then continue end
-		end
+		if p:GetNWBool("disguised", false) and !ply:IsTraitor() then continue end
 
 		local pos = p:LocalToWorld(p:OBBCenter())
 
-		-- Round off, easier to send and inaccuracy does not matter
-		pos.x = math.Round(pos.x)
-		pos.y = math.Round(pos.y)
-		pos.z = math.Round(pos.z)
+		local role = p:GetRole()
+		if role != ROLE_INNOCENT and role != ply:GetRole() then
+			-- Detectives/Traitors can see who has their role, but not who
+			-- has the opposite role.
+			role = ROLE_INNOCENT
+		end
 
-		local role = ROLE_INNOCENT
-
-		table.insert(targets, {role = role, pos = pos})
+		table.insert(targets, {role=role, pos=pos, ent=p})
 	end
+
+	hook.Run("TTTRadarScan", ply, targets)
 
 	net.Start("TTT_Radar")
 		net.WriteUInt(#targets, 8)
 		for k, tgt in ipairs(targets) do
 			net.WriteUInt(tgt.role, 2)
 
-			net.WriteInt(tgt.pos.x, 15)
-			net.WriteInt(tgt.pos.y, 15)
-			net.WriteInt(tgt.pos.z, 15)
+			-- Round off, easier to send and inaccuracy does not matter
+			net.WriteInt(math.Round(tgt.pos.x), 15)
+			net.WriteInt(math.Round(tgt.pos.y), 15)
+			net.WriteInt(math.Round(tgt.pos.z), 15)
 		end
 	net.Send(ply)
 end

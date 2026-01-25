@@ -295,6 +295,32 @@ hook.Add("PostGamemodeLoaded", "TraitorJoesTTT2Workaround", function()
 	end
 end)
 
+hook.Add("TTTRadarScan", "TraitorJoes_RadarPings", function(ply, targets)
+	local ent = TRAITORJOE.Joe.Entity
+	if IsValid(ent) then
+		-- red ping
+		table.insert(targets, {role=1, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
+	end
+
+	ent = TRAITORJOE.Tony.Entity
+	if IsValid(ent) then
+		-- red ping
+		table.insert(targets, {role=1, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
+	end
+
+	ent = ents.FindByClass("tj_npc_bku")[1]
+	if IsValid(ent) then
+		-- green ping
+		table.insert(targets, {role=0, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
+	end
+
+	ent = ents.FindByName("tj_final_computer")[1]
+	if IsValid(ent) then
+		-- O_o
+		table.insert(targets, {role=3, pos=ent:GetPos(), ent=ent})
+	end
+end)
+
 net.Receive("TraitorJoe_ApplyForMembership", function(_, ply)
 	TRAITORJOE.Joe.Members[ply:SteamID64()] = true
 end)
@@ -358,7 +384,7 @@ net.Receive("TraitorJoe_BKUCredits", function(_, ply)
 		end
 	end
 
-	if !IsValid(bku) then return end
+	if !IsValid(bku) then return end -- if you're gonna cheat at least let bku exist first
 
 	if ply:GetCredits() > 0 then return end
 
