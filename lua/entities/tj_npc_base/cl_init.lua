@@ -285,10 +285,8 @@ function ENT:CreateChatOptions(key, face, idx)
 		optOrder[pri] = {k = k, v = v}
 	end
 
-	for i = 1, #optOrder do -- add our choices
-		local opt = optOrder[i]
-		if !opt then continue end
-
+	local i = 1
+	for _, opt in pairs(optOrder) do -- add our choices
 		local k = opt.k
 		local v = opt.v
 
