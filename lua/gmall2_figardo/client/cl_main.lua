@@ -88,7 +88,15 @@ net.Receive("TraitorJoe_Annoyed", function()
 end)
 
 net.Receive("TraitorJoe_BuyItem", function()
-	TRAITORJOE.Joe.ItemsBought = net.ReadUInt(3)
+	local is_item = net.ReadBool()
+	local id = is_item and net.ReadUInt(3) or net.ReadString()
+
+	hook.Run("TTTBoughtItem", is_item, id)
+
+	local is_member = net.ReadBool()
+	if is_member then
+		TRAITORJOE.Joe.ItemsBought = net.ReadUInt(3)
+	end
 end)
 
 TRAITORJOE.UseEnts["tj_shitphone"] = function()

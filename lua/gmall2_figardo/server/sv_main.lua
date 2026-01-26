@@ -298,8 +298,8 @@ end)
 hook.Add("TTTRadarScan", "TraitorJoes_RadarPings", function(ply, targets)
 	local ent = TRAITORJOE.Joe.Entity
 	if IsValid(ent) then
-		-- red ping
-		table.insert(targets, {role=1, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
+		-- blue ping
+		table.insert(targets, {role=2, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
 	end
 
 	ent = TRAITORJOE.Tony.Entity

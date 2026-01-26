@@ -411,6 +411,13 @@ function RADAR:Timeout()
 	end
 end
 
+function RADAR.Bought(is_item, id)
+	if is_item and id == EQUIP_RADAR then
+		RunConsoleCommand("ttt_radar_scan")
+	end
+end
+hook.Add("TTTBoughtItem", "RadarBoughtItem", RADAR.Bought)
+
 local function ReceiveRadarScan()
 	local num_targets = net.ReadUInt(8)
 

@@ -49,7 +49,8 @@ function ENT:BuyItem(ply, id)
 
 	if !item.free and ply:GetCredits() <= 0 then return end
 
-	if isnumber(item.id) then
+	local is_item = isnumber(item.id)
+	if is_item then
 		if !ply:GiveEquipmentItem(item.id) then return end
 	else
 		if ply:HasWeapon(item.id) then return end
@@ -62,17 +63,28 @@ function ENT:BuyItem(ply, id)
 	end
 
 	local sid = ply:SteamID64()
-	if TRAITORJOE.Joe.Members[sid] then
+	local is_member = TRAITORJOE.Joe.Members[sid]
+	if is_member then
 		if !TRAITORJOE.Joe.ItemsBought[sid] then
 			TRAITORJOE.Joe.ItemsBought[sid] = 0
 		end
 
 		TRAITORJOE.Joe.ItemsBought[sid] = math.min(TRAITORJOE.Joe.ItemsBought[sid] + 1, prizeThreshold)
-
-		net.Start("TraitorJoe_BuyItem")
-			net.WriteUInt(TRAITORJOE.Joe.ItemsBought[sid], 3)
-		net.Send(ply)
 	end
+
+	net.Start("TraitorJoe_BuyItem")
+		net.WriteBool(is_item)
+		if is_item then
+			net.WriteUInt(item.id, 3)
+		else
+			net.WriteString(item.id)
+		end
+
+		net.WriteBool(is_member)
+		if is_member then
+			net.WriteUInt(TRAITORJOE.Joe.ItemsBought[sid], 3)
+		end
+	net.Send(ply)
 end
 net.Receive("TraitorJoe_BuyItem", function(_, ply)
 	local joe = TRAITORJOE.Joe.Entity
