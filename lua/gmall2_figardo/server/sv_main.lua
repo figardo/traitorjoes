@@ -16,9 +16,7 @@ function TRAITORJOE.SendAnnoyance(annoyance, ply, class)
 	end
 
 	local ent
-	for _, e in ents.Iterator() do
-		if e:GetClass() != class then continue end
-
+	for _, e in ipairs(ents.FindByClass(class)) do
 		ent = e
 		break
 	end
@@ -77,9 +75,7 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 				ResetBoneManips(joe)
 			end
 		else
-			for _, ent in ents.Iterator() do
-				if ent:GetName() != "tj_traitorjoe_spawn" then continue end
-
+			for _, ent in ipairs(ents.FindByName("tj_traitorjoe_spawn")) do
 				local npc = SpawnOnTarget("tj_npc_joe", ent)
 
 				if !noAnnoy then
@@ -93,9 +89,7 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 		end
 
 		if IsMounted("treason") and !IsValid(self.Tony.Entity) then
-			for _, ent in ents.Iterator() do
-				if ent:GetName() != "tj_traitortony_spawn" then continue end
-
+			for _, ent in ipairs(ents.FindByName("tj_traitortony_spawn")) do
 				local npc = SpawnOnTarget("tj_npc_tony", ent)
 
 				self.Tony.Entity = npc
@@ -107,9 +101,7 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 		if IsValid(self.Radio) then
 			self.Radio:StopRadio()
 		else
-			for _, ent in ents.Iterator() do
-				if ent:GetName() != "tj_radio_spawn" then continue end
-
+			for _, ent in ipairs(ents.FindByName("tj_radio_spawn")) do
 				local radio = SpawnOnTarget("tj_radio", ent)
 
 				self.Radio = radio
@@ -159,107 +151,93 @@ local hatModel = Model("models/mall_member/figardo/vending_hat.mdl")
 hook.Add("PostCleanupMap", "TraitorJoesCleanupPrevention", function()
 	TRAITORJOE:OnEnterOrLeave(true, engine.ActiveGamemode() == "terrortown")
 
-	for _, ent in ents.Iterator() do
-		local name = ent:GetName()
-		if TRAITORJOE.UseEnts[name] then
+	for name, _ in pairs(TRAITORJOE.UseEnts) do
+		for _, ent in ipairs(ents.FindByName(name)) do
 			ent:SetNW2String("gmall_figardo", name)
-			continue
 		end
+	end
 
-		if ent:GetName() == "tj_hat_spawn" then
-			local hat = SpawnOnTarget("tj_hat", ent, true)
+	for _, ent in ipairs(ents.FindByName("tj_hat_spawn")) do
+		local hat = SpawnOnTarget("tj_hat", ent, true)
 
-			hat:SetModel(hatModel)
-			hat.ShouldBoneMerge = false
+		hat:SetModel(hatModel)
+		hat.ShouldBoneMerge = false
 
-			hat:Spawn()
+		hat:Spawn()
 
-			hat:SetBeingWorn(false)
+		hat:SetBeingWorn(false)
 
-			hat:SetMoveType(MOVETYPE_VPHYSICS)
-			local phys = hat:GetPhysicsObject()
-			if IsValid(phys) then
-				phys:Wake()
-			end
+		hat:SetMoveType(MOVETYPE_VPHYSICS)
+		local phys = hat:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:Wake()
 		end
 	end
 end)
 
 hook.Add("InitPostEntity", "TraitorJoesEntityInitialization", function()
-	for _, ent in ents.Iterator() do
-		local name = ent:GetName()
-		if TRAITORJOE.UseEnts[name] then
+	for name, _ in pairs(TRAITORJOE.UseEnts) do
+		for _, ent in ipairs(ents.FindByName(name)) do
 			ent:SetNW2String("gmall_figardo", name) -- fucking stupid
-			continue
 		end
+	end
 
-		if name == "tj_hat_spawn" then
-			local hat = SpawnOnTarget("tj_hat", ent, true)
+	for _, ent in ipairs(ents.FindByName("tj_hat_spawn")) do
+		local hat = SpawnOnTarget("tj_hat", ent, true)
 
-			hat:SetModel(hatModel)
-			hat.ShouldBoneMerge = false
+		hat:SetModel(hatModel)
+		hat.ShouldBoneMerge = false
 
-			hat:Spawn()
+		hat:Spawn()
 
-			hat:SetBeingWorn(false)
+		hat:SetBeingWorn(false)
 
-			hat:SetMoveType(MOVETYPE_VPHYSICS)
-			local phys = hat:GetPhysicsObject()
-			if IsValid(phys) then
-				phys:Wake()
-			end
-
-			continue
+		hat:SetMoveType(MOVETYPE_VPHYSICS)
+		local phys = hat:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:Wake()
 		end
+	end
 
-		if name == "tj_radio_spawn" then
-			local radio = SpawnOnTarget("tj_radio", ent)
+	for _, ent in ipairs(ents.FindByName("tj_radio_spawn")) do
+		local radio = SpawnOnTarget("tj_radio", ent)
 
-			TRAITORJOE.Radio = radio
+		TRAITORJOE.Radio = radio
+	end
 
-			continue
+	for _, ent in ipairs(ents.FindByName("tj_traitorjoe_spawn")) do
+		local npc = SpawnOnTarget("tj_npc_joe", ent)
+
+		TRAITORJOE.Joe.Entity = npc
+
+		-- this is a terrible approach! but i don't care :)
+		local boundsMin = ent:GetPos() + Vector(-218, 254, 0)
+		local boundsMax = ent:GetPos() + Vector(218, -562, 120)
+
+		-- the store as a whole (spawning/spraying checks)
+		TRAITORJOE.Bounds.Min = Vector(math.min(boundsMin.x, boundsMax.x), math.min(boundsMin.y, boundsMax.y), math.min(boundsMin.z, boundsMax.z))
+		TRAITORJOE.Bounds.Max = Vector(math.max(boundsMin.x, boundsMax.x), math.max(boundsMin.y, boundsMax.y), math.max(boundsMin.z, boundsMax.z))
+
+		local jailMin = ent:GetPos() + Vector(-218, 126, 0)
+		local jailMax = ent:GetPos() + Vector(218, -18, 120)
+
+		-- behind the counter (moved check)
+		TRAITORJOE.Joe.Jail.Min = Vector(math.min(jailMin.x, jailMax.x), math.min(jailMin.y, jailMax.y), math.min(jailMin.z, jailMax.z))
+		TRAITORJOE.Joe.Jail.Max = Vector(math.max(jailMin.x, jailMax.x), math.max(jailMin.y, jailMax.y), math.max(jailMin.z, jailMax.z))
+	end
+
+	for _, ent in ipairs(ents.FindByName("tj_traitortony_spawn")) do
+		TRAITORJOE.DefibSpawn = ent
+
+		if IsMounted("treason") then
+			local npc = SpawnOnTarget("tj_npc_tony", ent)
+
+			TRAITORJOE.Tony.Entity = npc
 		end
+	end
 
-		if name == "tj_traitorjoe_spawn" then
-			local npc = SpawnOnTarget("tj_npc_joe", ent)
-
-			TRAITORJOE.Joe.Entity = npc
-
-			-- this is a terrible approach! but i don't care :)
-			local boundsMin = ent:GetPos() + Vector(-218, 254, 0)
-			local boundsMax = ent:GetPos() + Vector(218, -562, 120)
-
-			-- the store as a whole (spawning/spraying checks)
-			TRAITORJOE.Bounds.Min = Vector(math.min(boundsMin.x, boundsMax.x), math.min(boundsMin.y, boundsMax.y), math.min(boundsMin.z, boundsMax.z))
-			TRAITORJOE.Bounds.Max = Vector(math.max(boundsMin.x, boundsMax.x), math.max(boundsMin.y, boundsMax.y), math.max(boundsMin.z, boundsMax.z))
-
-			local jailMin = ent:GetPos() + Vector(-218, 126, 0)
-			local jailMax = ent:GetPos() + Vector(218, -18, 120)
-
-			-- behind the counter (moved check)
-			TRAITORJOE.Joe.Jail.Min = Vector(math.min(jailMin.x, jailMax.x), math.min(jailMin.y, jailMax.y), math.min(jailMin.z, jailMax.z))
-			TRAITORJOE.Joe.Jail.Max = Vector(math.max(jailMin.x, jailMax.x), math.max(jailMin.y, jailMax.y), math.max(jailMin.z, jailMax.z))
-
-			continue
-		end
-
-		if name == "tj_traitortony_spawn" then
-			TRAITORJOE.DefibSpawn = ent
-
-			if IsMounted("treason") then
-				local npc = SpawnOnTarget("tj_npc_tony", ent)
-
-				TRAITORJOE.Tony.Entity = npc
-			end
-
-			continue
-		end
-
-		if name == "tj_bin_spawn" then
-			TRAITORJOE.BinSpawn = ent
-
-			continue
-		end
+	for _, ent in ipairs(ents.FindByName("tj_bin_spawn")) do
+		TRAITORJOE.BinSpawn = ent
 	end
 end)
 
@@ -299,25 +277,25 @@ hook.Add("TTTRadarScan", "TraitorJoes_RadarPings", function(ply, targets)
 	local ent = TRAITORJOE.Joe.Entity
 	if IsValid(ent) then
 		-- blue ping
-		table.insert(targets, {role=2, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
+		table.insert(targets, {role = 2, pos = ent:LocalToWorld(ent:OBBCenter()), ent = ent})
 	end
 
 	ent = TRAITORJOE.Tony.Entity
 	if IsValid(ent) then
 		-- red ping
-		table.insert(targets, {role=1, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
+		table.insert(targets, {role = 1, pos = ent:LocalToWorld(ent:OBBCenter()), ent = ent})
 	end
 
 	ent = ents.FindByClass("tj_npc_bku")[1]
 	if IsValid(ent) then
 		-- green ping
-		table.insert(targets, {role=0, pos=ent:LocalToWorld(ent:OBBCenter()), ent=ent})
+		table.insert(targets, {role = 0, pos = ent:LocalToWorld(ent:OBBCenter()), ent = ent})
 	end
 
 	ent = ents.FindByName("tj_final_computer")[1]
 	if IsValid(ent) then
 		-- O_o
-		table.insert(targets, {role=3, pos=ent:GetPos(), ent=ent})
+		table.insert(targets, {role = 3, pos = ent:GetPos(), ent = ent})
 	end
 end)
 
@@ -332,9 +310,7 @@ net.Receive("TraitorJoe_SpawnDefib", function(_, ply)
 		error("Player " .. ply:Nick() .. " tried to rudely intrude upon Tony's personal space.")
 	end
 
-	for _, ent in ents.Iterator() do
-		if ent:GetClass() != "weapon_ttt_tj_defib" then continue end
-
+	for _, ent in ipairs(ents.FindByClass("weapon_ttt_tj_defib")) do
 		if !IsValid(ent:GetOwner()) then return end -- if there's already a defib on the floor then don't bother spawning another
 	end
 
@@ -345,8 +321,8 @@ net.Receive("TraitorJoe_SpawnDefib", function(_, ply)
 end)
 
 net.Receive("TraitorJoe_SpawnBin", function(_, ply)
-	for _, ent in ents.Iterator() do
-		if ent:GetClass() == "tj_bin" then return end -- if there's already a bin then don't bother spawning another
+	for _, ent in ipairs(ents.FindByClass("tj_bin")) do
+		return -- if there's already a bin then don't bother spawning another
 	end
 
 	SpawnOnTarget("tj_bin", TRAITORJOE.BinSpawn)
@@ -377,11 +353,9 @@ end)
 
 net.Receive("TraitorJoe_BKUCredits", function(_, ply)
 	local bku
-	for _, ent in ents.Iterator() do
-		if ent:GetClass() == "tj_npc_bku" then
-			bku = ent
-			break
-		end
+	for _, ent in ipairs(ents.FindByClass("tj_npc_bku")) do
+		bku = ent
+		break
 	end
 
 	if !IsValid(bku) then return end -- if you're gonna cheat at least let bku exist first
