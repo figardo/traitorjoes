@@ -1,4 +1,4 @@
-if game.GetMap() != "mall_store_size" then return end
+if game.GetMap() != "mall_store_size" and game.GetMap() != "gm_gmall_2" then return end
 
 include("gmall2_figardo/shared/sh_main.lua")
 

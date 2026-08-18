@@ -1,6 +1,6 @@
 include("shared.lua")
 
-if game.GetMap() != "mall_store_size" then return end
+if game.GetMap() != "mall_store_size" and game.GetMap() != "gm_gmall_2" then return end
 
 function ENT:Draw()
 	if !self:IsEffectActive(EF_BONEMERGE) then

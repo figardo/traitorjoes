@@ -1,6 +1,6 @@
 ENT.Base = "tj_npc_base"
 
-if game.GetMap() != "mall_store_size" then return end
+if game.GetMap() != "mall_store_size" and game.GetMap() != "gm_gmall_2" then return end
 
 ENT.TJGlobalName = "Joe"
 

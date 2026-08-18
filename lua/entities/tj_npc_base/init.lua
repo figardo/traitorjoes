@@ -2,7 +2,7 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-if game.GetMap() != "mall_store_size" then return end
+if game.GetMap() != "mall_store_size" and game.GetMap() != "gm_gmall_2" then return end
 
 util.AddNetworkString("TraitorJoe_Physgunned")
 
