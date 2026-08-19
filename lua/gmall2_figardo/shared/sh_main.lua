@@ -93,6 +93,7 @@ ANNOY_FINAL = RegisterAnnoyance({
 -- Extra SWEP Registration
 
 hook.Add("PostGamemodeLoaded", "TraitorJoesExtraWeapons", function()
+	-- Carbine
 	local tbl = weapons.Get("weapon_ttt_m16")
 
 	tbl.Spawnable			= false
@@ -118,6 +119,7 @@ hook.Add("PostGamemodeLoaded", "TraitorJoesExtraWeapons", function()
 
 	weapons.Register(tbl, "weapon_ttt_carbine")
 
+	-- Defib
 	tbl = weapons.Get("weapon_ttt_defuser")
 
 	tbl.PrintName			= "Defibrillator"
@@ -141,9 +143,7 @@ hook.Add("PostGamemodeLoaded", "TraitorJoesExtraWeapons", function()
 		if ent:GetName() != "tj_shitleton" then return end
 
 		local spawn
-		for _, e in ents.Iterator() do
-			if e:GetName() != "tj_bku_spawn" then continue end
-
+		for _, e in ipairs(ents.FindByName("tj_bku_spawn")) do
 			spawn = e
 			break
 		end
