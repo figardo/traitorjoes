@@ -15,6 +15,38 @@ ENT.Anim = "idle_all_01"
 ENT.FaceFolder = "bku"
 ENT.TJGlobalName = "BKU"
 
+local mainChat = {
+	["BKU.WhoAreYou"] = {
+		{text = "BKU.WhoAreYou.1"},
+		{text = "BKU.WhoAreYou.2"}
+	},
+	["BKU.WhyThere"] = {
+		{text = "BKU.WhyThere.1"},
+		{text = "BKU.WhyThere.2"},
+		{text = "BKU.WhyThere.3"},
+		{text = "BKU.WhyThere.4"},
+		{text = "BKU.WhyThere.5"}
+	},
+	["BKU.Credits"] = function()
+		local creds = LocalPlayer():GetCredits()
+		if creds >= 5 then
+			return {
+				{text = "BKU.Credits.No.1"},
+				{text = "BKU.Credits.No.2"},
+				{text = "BKU.Main"}
+			}
+		end
+
+		local tbl = creds > 0 and {{text = "BKU.Credits.Refill"}} or {{text = "BKU.Credits.1"}}
+		table.Add(tbl, {
+			{text = "BKU.Credits.2"},
+			{text = "BKU.Main"}
+		})
+
+		return tbl
+	end
+}
+
 ENT.ChatLayout = {
 	["BKU.Intro.1"] = {
 		{text = "BKU.Intro.2"},
@@ -22,30 +54,24 @@ ENT.ChatLayout = {
 		{text = "BKU.Intro.4"},
 		{text = "BKU.Main"}
 	},
-	["BKU.Main"] = {
-		["BKU.Credits"] = function()
-			if LocalPlayer():GetCredits() > 0 then
-				return {
-					{text = "BKU.Credits.No.1"},
-					{text = "BKU.Credits.No.2"},
-					{text = "BKU.Main"}
-				}
-			end
-
-			return {
-				{text = "BKU.Credits.1"},
-				{text = "BKU.Credits.2"},
-				{text = "BKU.Main"}
-			}
-		end
-	}
+	["BKU.Main"] = mainChat,
+	["BKU.WhoAreYou.2"] = mainChat,
+	["BKU.WhyThere.5"] = mainChat
 }
 
 ENT.ChatHooks = {
 	["BKU.Credits.1"] = function()
 		net.Start("TraitorJoe_BKUCredits")
 		net.SendToServer()
+
+		surface.PlaySound("mall_member/figardo/bloop.wav")
 	end
+}
+
+ENT.ChatPriority = {
+	["BKU.WhoAreYou"] = 1,
+	["BKU.WhyThere"] = 2,
+	["BKU.Credits"] = 3
 }
 
 function ENT:GetInitialChat()
