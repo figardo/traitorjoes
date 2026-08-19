@@ -52,7 +52,7 @@ local function RadarScan(ply, cmd, args)
 			role = ROLE_INNOCENT
 		end
 
-		table.insert(targets, {role=role, pos=pos, ent=p})
+		table.insert(targets, {role = role, pos = pos, ent = p})
 	end
 
 	hook.Run("TTTRadarScan", ply, targets)
