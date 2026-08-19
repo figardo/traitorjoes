@@ -80,10 +80,10 @@ ANNOY_SPAWN = RegisterAnnoyance({["tj_npc_joe"] = {face = "neutral", text = "Joe
 ANNOY_FINAL = RegisterAnnoyance({
 	["tj_npc_joe"] = function(self)
 		local annoys = self:GetAnnoyanceCount()
-		if annoys > 1 then
-			return {face = "annoyed", text = "Joe.Final.1"}
-		elseif annoys >= ANNOY_MAX then
+		if annoys >= ANNOY_MAX then
 			return {face = "angry", text = "Joe.Final.Bad.1"}
+		elseif annoys > 1 then
+			return {face = "annoyed", text = "Joe.Final.1"}
 		end
 
 		return {face = "smirk", text = "Joe.Final.Good.1"}

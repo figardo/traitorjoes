@@ -328,6 +328,10 @@ net.Receive("TraitorJoe_SpawnBin", function(_, ply)
 	SpawnOnTarget("tj_bin", TRAITORJOE.BinSpawn)
 end)
 
+net.Receive("TraitorJoe_BadEnding", function(_, ply)
+	ply:StripWeapons()
+end)
+
 net.Receive("TraitorJoe_HatTransfer", function(_, ply)
 	local hat = ply.hat
 	if !IsValid(hat) or hat:GetParent() != ply then return end

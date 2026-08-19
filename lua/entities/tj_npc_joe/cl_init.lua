@@ -204,6 +204,30 @@ ENT.ChatLayout = {
 		function(self) return true end -- close chat
 	},
 
+	["Joe.Final.Bad.1"] = {
+		{face = "annoyed", text = "Joe.Final.Bad.2"},
+	},
+	["Joe.Final.Bad.2"] = {
+		["Joe.Final.Bad.YesList"] = {
+			{face = "neutral", text = "Joe.Final.Bad.YesList.1"},
+			{face = "annoyed", text = "Joe.Final.Bad.YesList.2"},
+			{face = "smirk", text = "Joe.Final.Bad.YesList.3"},
+			{face = "smirk", text = "Joe.Final.Bad.YesList.4"},
+			{face = "troll", text = "Joe.Final.Bad.3"}
+		},
+		["Joe.Final.Bad.NoList"] = {
+			{face = "lookside", text = "Joe.Final.Bad.NoList.1"},
+			{face = "angry", text = "Joe.Final.Bad.NoList.2"},
+			{face = "annoyed", text = "Joe.Final.Bad.NoList.3"},
+			{face = "neutral", text = "Joe.Final.Bad.NoList.4"},
+			{face = "smirk", text = "Joe.Final.Bad.NoList.5"},
+			{face = "troll", text = "Joe.Final.Bad.3"}
+		}
+	},
+	["Joe.Final.Bad.3"] = {
+		function(self) return true end -- close chat
+	},
+
 	-- Shop
 	["Joe.Shop.GMCredits.1"] = {
 		{face = "neutral", text = "Joe.Shop.GMCredits.2"},
@@ -428,6 +452,10 @@ ENT.ChatHooks = {
 		TRAITORJOE.Joe.SellWeapons = true
 
 		net.Start("TraitorJoe_SpawnBin")
+		net.SendToServer()
+	end,
+	["Joe.Final.Bad.3"] = function(self)
+		net.Start("TraitorJoe_BadEnding")
 		net.SendToServer()
 	end,
 	["Joe.Hat.Deerstalker.5"] = function(self)
