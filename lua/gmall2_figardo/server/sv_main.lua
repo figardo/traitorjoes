@@ -360,7 +360,7 @@ net.Receive("TraitorJoe_BKUCredits", function(_, ply)
 
 	if !IsValid(bku) then return end -- if you're gonna cheat at least let bku exist first
 
-	if ply:GetCredits() > 0 then return end
+	if ply:GetCredits() >= 5 then return end
 
-	ply:AddCredits(5)
+	ply:SetCredits(5)
 end)

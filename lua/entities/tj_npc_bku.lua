@@ -59,13 +59,16 @@ ENT.ChatLayout = {
 	["BKU.WhyThere.5"] = mainChat
 }
 
-ENT.ChatHooks = {
-	["BKU.Credits.1"] = function()
-		net.Start("TraitorJoe_BKUCredits")
-		net.SendToServer()
+local function credits()
+	net.Start("TraitorJoe_BKUCredits")
+	net.SendToServer()
 
-		surface.PlaySound("mall_member/figardo/bloop.wav")
-	end
+	surface.PlaySound("mall_member/figardo/bloop.wav")
+end
+
+ENT.ChatHooks = {
+	["BKU.Credits.1"] = credits,
+	["BKU.Credits.Refill"] = credits
 }
 
 ENT.ChatPriority = {
