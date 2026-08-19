@@ -17,21 +17,12 @@ local initialMenu = {
 local function talkMenu()
 	local tbl = {}
 
-	tbl["WhoAreYou"] = {
-		{face = "smirk", text = "Joe.WhoAreYou.1"},
-		{face = "smile", text = "Joe.WhoAreYou.2"},
-		{face = "grin", text = "Joe.WhoAreYou.3"},
-		{face = "lookside", text = "Joe.WhoAreYou.4"},
-		{face = "smile", text = "Joe.WhoAreYou.5"},
-		{face = "smirk", text = "Joe.WhoAreYou.6"}
+	tbl["Joe.AboutYou"] = {
+		{face = "smile", text = "Joe.AboutYou.1"}
 	}
 
 	tbl["Joe.AboutThisPlace"] = {
 		{face = "neutral", text = "Joe.AboutThisPlace.1"}
-	}
-
-	tbl["Joe.Detective"] = {
-		function(self) return self:GetAnnoyed(ANNOY_HAT) and {face = "annoyed", text = "Joe.Detective.Shot.1"} or {face = "neutral", text = "Joe.Detective.1"} end
 	}
 
 	if !TRAITORJOE.Joe.Membership then
@@ -64,6 +55,20 @@ local function talkMenu()
 
 	return tbl
 end
+
+local youMenu = {
+	["WhoAreYou"] = {
+		{face = "smirk", text = "Joe.WhoAreYou.1"},
+		{face = "smile", text = "Joe.WhoAreYou.2"},
+		{face = "grin", text = "Joe.WhoAreYou.3"},
+		{face = "lookside", text = "Joe.WhoAreYou.4"},
+		{face = "smile", text = "Joe.WhoAreYou.5"},
+		{face = "smirk", text = "Joe.WhoAreYou.6"}
+	},
+	["Joe.Detective"] = {
+		function(self) return self:GetAnnoyed(ANNOY_HAT) and {face = "annoyed", text = "Joe.Detective.Shot.1"} or {face = "neutral", text = "Joe.Detective.1"} end
+	}
+}
 
 local function placeMenu()
 	local tbl = {}
@@ -155,6 +160,7 @@ ENT.ChatLayout = {
 	["Joe.Talk.2"] = talkMenu,
 	["Joe.Talk.Short"] = talkMenu,
 	["Joe.WhoAreYou.6"] = talkMenu,
+	["Joe.AboutYou.1"] = youMenu,
 	["Joe.AboutThisPlace.1"] = placeMenu,
 	["Joe.WhyMove.Sandbox.2"] = talkMenu,
 	["Joe.WhyMove.TTT.2"] = talkMenu,
