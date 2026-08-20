@@ -266,6 +266,8 @@ function ENT:CreateChatOptions(key, face, idx)
 		else -- set up ellipses button that'll show the next ramble
 			options = {["Ellipses"] = {options[idx + 1]}}
 		end
+	else
+		idx = 0
 	end
 
 	local func = self.ChatHooks[key]
