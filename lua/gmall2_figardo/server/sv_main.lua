@@ -315,6 +315,13 @@ net.Receive("TraitorJoe_SpawnDefib", function(_, ply)
 	end
 
 	local spawn = TRAITORJOE.DefibSpawn
+	if !IsValid(spawn) then
+		for _, ent in ipairs(ents.FindByName("tj_traitortony_spawn")) do
+			spawn = ent
+			TRAITORJOE.DefibSpawn = ent
+		end
+	end
+
 	spawn:EmitSound("physics/glass/glass_largesheet_break3.wav")
 
 	SpawnOnTarget("weapon_ttt_tj_defib", spawn)
