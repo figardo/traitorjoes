@@ -51,6 +51,11 @@ local function talkMenu()
 				return true
 			end
 		}
+	else
+		tbl["Joe.Redeem"] = {
+			{face = "neutral", text = "Joe.Redeem.Progress.1"},
+			{face = "smirk", text = "Joe.Redeem.Progress.2"}
+		}
 	end
 
 	return tbl
@@ -178,6 +183,7 @@ ENT.ChatLayout = {
 	},
 	["Joe.Detective.3"] = talkMenu,
 	["Joe.MemberCard.5"] = talkMenu,
+	["Joe.Redeem.Progress.2"] = talkMenu,
 
 	-- Endings
 	["Joe.Final.1"] = {
