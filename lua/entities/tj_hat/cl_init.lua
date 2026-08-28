@@ -13,13 +13,13 @@ function ENT:Draw()
 	self:DrawModel()
 end
 
-local text = "Press E to wear hat."
 function ENT:TraitorJoeTargetID()
 	if IsValid(self:GetParent()) then return end
 
 	local font = "TargetIDSmall"
 	surface.SetFont( font )
 
+	local text = TRAITORJOE.UseFormat("TraitorJoes.Hat.TargetID")
 	local w = surface.GetTextSize(text)
 	local x_orig = ScrW() / 2.0
 	local x = x_orig - w / 2

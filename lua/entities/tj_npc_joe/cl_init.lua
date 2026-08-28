@@ -474,9 +474,9 @@ ENT.ChatHooks = {
 
 ENT.AnnoyMessages = {
 	[ANNOY_PHYSGUN] = {
-		"Put me down!",
-		"Cut it out!",
-		"Quit messin' around!"
+		"TraitorJoes.Joe.Physgun.Yelp.1",
+		"TraitorJoes.Joe.Physgun.Yelp.2",
+		"TraitorJoes.Joe.Physgun.Yelp.3"
 	}
 }
 

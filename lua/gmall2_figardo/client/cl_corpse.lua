@@ -4,30 +4,36 @@ local skeleSearch = {
 	nick = {
 		img = "mall_member/figardo/icon_id",
 		av = "mall_member/figardo/icon_bku",
-		text = "This is the body of Bad King Urgrain.",
+		-- This is the body of Bad King Urgrain.
+		text = "#TraitorJoes.BKU.Corpse.ID",
 		p = 1
 	},
 	role = {
 		img = "mall_member/figardo/icon_traitor",
-		text = "This person was a Traitor Joe's employee!",
+		-- This person was a Traitor Joe's employee!
+		text = "#TraitorJoes.BKU.Corpse.Role",
 		p = 2
 	},
 	dtime = {
 		img = "mall_member/figardo/icon_time",
-		text = "They died roughly " .. tonumber(os.date("%Y")) - 2012 .. " years before you conducted the search.",
+		-- TODO: language.FormatPhrase
+		-- They died roughly %i years before you conducted the search.
+		text = string.format(language.GetPhrase("TraitorJoes.BKU.Corpse.Time"), tonumber(os.date("%Y")) - 2012),
 		text_icon = "99:99",
 		p = 8
 	},
 	words = {
 		img = "mall_member/figardo/icon_halp",
-		text = "Something tells you some of this person's last words were: 'Man I'm hungry'",
+		-- Something tells you some of this person's last words were: 'Man I'm hungry'
+		text = "#TraitorJoes.BKU.Corpse.Words",
 		p = 10
 	},
 	dmg = {
 		img = "mall_member/figardo/icon_skull",
-		text = "It seems they starved to death.",
+		-- It seems they starved to death.
+		text = "#TraitorJoes.BKU.Corpse.Death",
 		p = 12
-	},
+	}
 }
 
 local function SearchInfoController(search, dactive, dtext)
@@ -42,41 +48,41 @@ local function SearchInfoController(search, dactive, dtext)
 		-- If wrapping is on, the Label's SizeToContentsY misbehaves for
 		-- text that does not need wrapping. I long ago stopped wondering
 		-- "why" when it comes to VGUI. Apply hack, move on.
-		dtext:GetLabel():SetWrap(#data.text > 50)
+		dtext:GetLabel():SetWrap(#language.GetPhrase(data.text) > 50)
 
 		dtext:SetText(data.text)
 		dactive:SetImage(data.img)
 	end
 end
 
+local m = 8
+local bw, bh = 100, 25
+local bw_large = 125
+local w, h = 425, 260
+
+local rw, rh = (w - m * 2), (h - 25 - m * 2)
+local rx, ry = 0, 0
+
+local rows = 1
+local listw, listh = rw, (64 * rows + 6)
+local listx, listy = rx, ry
+
+ry = ry + listh + m * 2
+rx = m
+
+local descw, desch = rw - m * 2, 80
+local descx, descy = rx, ry
+
+ry = ry + desch + m
+
 local function ShowSearchScreen()
 	local client = LocalPlayer()
 	if !IsValid(client) then return end
 
-	local m = 8
-	local bw, bh = 100, 25
-	local bw_large = 125
-	local w, h = 425, 260
-
-	local rw, rh = (w - m * 2), (h - 25 - m * 2)
-	local rx, ry = 0, 0
-
-	local rows = 1
-	local listw, listh = rw, (64 * rows + 6)
-	local listx, listy = rx, ry
-
-	ry = ry + listh + m * 2
-	rx = m
-
-	local descw, desch = rw - m * 2, 80
-	local descx, descy = rx, ry
-
-	ry = ry + desch + m
-
 	local dframe = vgui.Create("DFrame")
 	dframe:SetSize(w, h)
 	dframe:Center()
-	dframe:SetTitle("Body Search Results - Bad King Urgrain")
+	dframe:SetTitle("#TraitorJoes.BKU.Corpse.Title")
 	dframe:SetVisible(true)
 	dframe:ShowCloseButton(true)
 	dframe:SetMouseInputEnabled(true)
@@ -128,10 +134,10 @@ local function ShowSearchScreen()
 	-- buttons
 	local by = rh - bh - (m / 2)
 
-	local doThat = "Please don't do that."
+	local doThat = "#TraitorJoes.BKU.Corpse.NotThat"
 	local selfReport = function(s)
 		s:SetText(doThat)
-		doThat = "Or that. - TJ"
+		doThat = "#TraitorJoes.BKU.Corpse.OrThat"
 
 		s:SetDisabled(true)
 	end
@@ -139,19 +145,19 @@ local function ShowSearchScreen()
 	local dident = vgui.Create("DButton", dcont)
 	dident:SetPos(m, by)
 	dident:SetSize(bw_large, bh)
-	dident:SetText("Confirm Death")
+	dident:SetText("#TraitorJoes.BKU.Corpse.Confirm")
 	dident.DoClick = selfReport
 
 	local dcall = vgui.Create("DButton", dcont)
 	dcall:SetPos(m * 2 + bw_large, by)
 	dcall:SetSize(bw_large, bh)
-	dcall:SetText("Call Detective")
+	dcall:SetText("#TraitorJoes.BKU.Corpse.Call")
 	dcall.DoClick = selfReport
 
 	local dconfirm = vgui.Create("DButton", dcont)
 	dconfirm:SetPos(rw - m - bw, by)
 	dconfirm:SetSize(bw, bh)
-	dconfirm:SetText("Close")
+	dconfirm:SetText("#TraitorJoes.BKU.Corpse.Close")
 	dconfirm.DoClick = function() dframe:Close() end
 
 	-- Install info controller that will link up the icons to the text etc

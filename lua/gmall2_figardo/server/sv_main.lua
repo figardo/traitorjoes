@@ -114,6 +114,8 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 	end
 end
 
+-- HOOK --
+
 hook.Add("PlayerSpray", "TraitorJoesSprayDetector", function(ply)
 	local trace = util.GetPlayerTrace(ply, ply:EyeAngles():Forward())
 	trace.mask = MASK_SOLID_BRUSHONLY
@@ -298,6 +300,8 @@ hook.Add("TTTRadarScan", "TraitorJoes_RadarPings", function(ply, targets)
 		table.insert(targets, {role = 3, pos = ent:GetPos(), ent = ent})
 	end
 end)
+
+-- NET --
 
 net.Receive("TraitorJoe_ApplyForMembership", function(_, ply)
 	TRAITORJOE.Joe.Members[ply:SteamID64()] = true

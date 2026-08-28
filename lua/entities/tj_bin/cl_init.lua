@@ -3,13 +3,13 @@ include("shared.lua")
 function ENT:UseOverride()
 end
 
-local text = "Press E to search bin."
 function ENT:TraitorJoeTargetID()
 	if IsValid(self:GetParent()) then return end
 
 	local font = "TargetIDSmall"
 	surface.SetFont( font )
 
+	local text = TRAITORJOE.UseFormat("TraitorJoes.Bin.TargetID")
 	local w = surface.GetTextSize(text)
 	local x_orig = ScrW() / 2.0
 	local x = x_orig - w / 2

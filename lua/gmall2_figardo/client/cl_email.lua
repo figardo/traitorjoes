@@ -12,22 +12,22 @@ local emailSoundPlaying = Material("icon16/sound.png")
 
 local emailData = {
 	{
-		inbox = "Inbox",
+		inbox = "TraitorJoes.Email.Inbox",
 		icon = emailUnread,
 		emails = {
 			{name = "FunnyStarRunner", email = "funnystarrunner@gmall.net", subject = "#TraitorJoes.GMall.Subject", text = "TraitorJoes.GMall.Text"},
-			{name = "The Shareholders", email = "theshareholders@traitorjoes.nl", subject = "#TraitorJoes.TradeSecrets.Subject", text = "TraitorJoes.TradeSecrets.Text"}
+			{name = "#TraitorJoes.Shareholders", email = "theshareholders@traitorjoes.nl", subject = "#TraitorJoes.TradeSecrets.Subject", text = "TraitorJoes.TradeSecrets.Text"}
 		}
 	},
 	{
-		inbox = "Outbox",
+		inbox = "TraitorJoes.Email.Outbox",
 		icon = emailRead,
 		send = true,
 		emails = {
 		}
 	},
 	{
-		inbox = "Drafts",
+		inbox = "TraitorJoes.Email.Drafts",
 		icon = emailDraft,
 		send = true,
 		emails = {
@@ -35,7 +35,7 @@ local emailData = {
 		}
 	},
 	{
-		inbox = "Sent Items",
+		inbox = "TraitorJoes.Email.Sent",
 		icon = emailSent,
 		send = true,
 		emails = {
@@ -44,7 +44,7 @@ local emailData = {
 		}
 	},
 	{
-		inbox = "Junk E-mail",
+		inbox = "TraitorJoes.Email.Junk",
 		icon = emailSpam,
 		emails = {
 			{name = "dogshit.gg", email = "gambamarketing@dogshit.gg", subject = "#TraitorJoes.Inventory.Subject", text = "TraitorJoes.Inventory.Text"},
@@ -121,7 +121,7 @@ local function ShowEmailScreen(self)
 		surface.SetTextColor(40, 40, 40)
 		surface.SetFont("EmailBold")
 		surface.SetTextPos((sidePadding * 2) + iconSize, headerHeight + 2)
-		surface.DrawText("Mailbox - Traitor Joe")
+		surface.DrawText("#TraitorJoes.Email.Mailbox")
 	end
 	inboxes:Add(inboxHeader)
 
@@ -144,7 +144,7 @@ local function ShowEmailScreen(self)
 			surface.DrawTexturedRect((sidePadding * 2) + iconSize, 0, iconSize + 1, iconSize)
 
 			surface.SetFont("EmailBold")
-			local inboxText = text .. " (" .. #emails .. ")"
+			local inboxText = language.GetPhrase(text) .. " (" .. #emails .. ")"
 			local tx = surface.GetTextSize(inboxText)
 
 			local textx = (sidePadding * 3) + (iconSize * 2)
@@ -201,7 +201,7 @@ local function ShowEmailScreen(self)
 			surface.SetTextColor(255, 255, 255)
 			surface.SetFont("EmailHead")
 			surface.SetTextPos(sidePadding, headerHeight * 0.1)
-			surface.DrawText(text)
+			surface.DrawText(language.GetPhrase(text))
 
 			-- surface.SetDrawColor(255, 255, 255)
 			-- surface.SetMaterial(emailBox)

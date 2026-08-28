@@ -145,13 +145,16 @@ end)
 
 local rag_color = Color(200,200,200,255)
 
-local unidedName = "Unidentified body"
-local corpseName = "Corpse"
-local corpseHint = "Press E to search covertly."
+local useKey = input.LookupBinding("use")
+useKey = useKey and string.upper(useKey) or "E"
+
+function TRAITORJOE.UseFormat(str)
+	return string.format(language.GetPhrase(str), useKey)
+end
 
 local targetIDEnts = {
 	["tj_shitleton"] = function()
-		local text = unidedName
+		local text = "#TraitorJoes.BKU.Corpse.TargetIDHead"
 
 		local x_orig = ScrW() / 2.0
 		local x = x_orig
@@ -169,7 +172,7 @@ local targetIDEnts = {
 
 		y = y + h + 4
 
-		text = corpseName
+		text = "#TraitorJoes.BKU.Corpse.TargetIDSub"
 		font = "TargetIDSmall2"
 
 		surface.SetFont( font )
@@ -179,7 +182,7 @@ local targetIDEnts = {
 		draw.SimpleText( text, font, x + 1, y + 1, COLOR_BLACK )
 		draw.SimpleText( text, font, x, y, rag_color )
 
-		text = corpseHint
+		text = TRAITORJOE.UseFormat("TraitorJoes.BKU.Corpse.TargetIDHint")
 
 		font = "TargetIDSmall"
 		surface.SetFont( font )
@@ -191,7 +194,7 @@ local targetIDEnts = {
 		draw.SimpleText( text, font, x, y, COLOR_LGRAY )
 	end,
 	["tj_shitphone"] = function()
-		local text = "Press E to check phone(?)"
+		local text = TRAITORJOE.UseFormat("TraitorJoes.Phone.TargetID")
 
 		local font = "TargetIDSmall"
 		surface.SetFont( font )
@@ -204,7 +207,7 @@ local targetIDEnts = {
 		draw.SimpleText( text, font, x, y, COLOR_LGRAY )
 	end,
 	["tj_final_computer"] = function()
-		local text = "Press E to use computer"
+		local text = TRAITORJOE.UseFormat("TraitorJoes.Computer.TargetID")
 
 		local font = "TargetIDSmall"
 		surface.SetFont( font )

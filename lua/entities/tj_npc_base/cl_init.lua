@@ -134,27 +134,25 @@ function ENT:ChatToString(str)
 	return language.GetPhrase("TraitorJoes." .. str)
 end
 
+local m = 8
+local w, h = 460, 325
+
+local rw, rh = (w - m * 2), (h - 25 - m * 2)
+local rx, ry = 8, 16
+
+local descw, desch = rw - m * 2, h / 3
+local descx, descy = rx, ry
+
+ry = ry + desch + m
+
 function ENT:ShowChatScreen(chatOverride)
 	local client = LocalPlayer()
-	if !IsValid(client) then return end
-
-	if IsValid(self.ChatPanel) then return end
-
-	local m = 8
-	local w, h = 460, 325
-
-	local rw, rh = (w - m * 2), (h - 25 - m * 2)
-	local rx, ry = 8, 16
-
-	local descw, desch = rw - m * 2, h / 3
-	local descx, descy = rx, ry
-
-	ry = ry + desch + m
+	if !IsValid(client) or IsValid(self.ChatPanel) then return end
 
 	local dframe = vgui.Create("DFrame")
 	dframe:SetSize(w, h)
 	dframe:Center()
-	dframe:SetTitle("Chat - " .. self.PrintName)
+	dframe:SetTitle(string.format(language.GetPhrase("TraitorJoes.NPC.Title"), self.PrintName))
 	dframe:SetVisible(true)
 	dframe:ShowCloseButton(true)
 	dframe:SetMouseInputEnabled(true)
@@ -364,33 +362,33 @@ function ENT:TraitorJoeTargetID()
 	local font = "TargetID"
 	surface.SetFont( font )
 
-	local w, h = surface.GetTextSize( text )
+	local tw, th = surface.GetTextSize( text )
 
-	x = x - w / 2
+	x = x - tw / 2
 
 	draw.SimpleText( text, font, x + 1, y + 1, COLOR_BLACK )
 	draw.SimpleText( text, font, x, y, COLOR_WHITE )
 
-	y = y + h + 4
+	y = y + th + 4
 
 	text = "Healthy"
 	font = "TargetIDSmall2"
 
 	surface.SetFont( font )
-	w, h = surface.GetTextSize( text )
-	x = x_orig - w / 2
+	tw, th = surface.GetTextSize( text )
+	x = x_orig - tw / 2
 
 	draw.SimpleText( text, font, x + 1, y + 1, COLOR_BLACK )
 	draw.SimpleText( text, font, x, y, COLOR_GREEN )
 
-	text = "Press E to talk."
+	text = TRAITORJOE.UseFormat("TraitorJoes.NPC.TargetID")
 
 	font = "TargetIDSmall"
 	surface.SetFont( font )
 
-	w, h = surface.GetTextSize(text)
-	x = x_orig - w / 2
-	y = y + h + 5
+	tw, th = surface.GetTextSize(text)
+	x = x_orig - tw / 2
+	y = y + th + 5
 	draw.SimpleText( text, font, x + 1, y + 1, COLOR_BLACK )
 	draw.SimpleText( text, font, x, y, COLOR_LGRAY )
 end
@@ -400,7 +398,7 @@ end
 function ENT:Annoy(annoyance)
 	local messages = self.AnnoyMessages[annoyance]
 	if messages then
-		LocalPlayer():ChatPrint(messages[math.random(#messages)])
+		LocalPlayer():ChatPrint(language.GetPhrase(messages[math.random(#messages)]))
 	end
 
 	local annoyData = TRAITORJOE.Annoyances[annoyance][self:GetClass()]
