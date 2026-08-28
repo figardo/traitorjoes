@@ -407,6 +407,10 @@ function ENT:Annoy(annoyance)
 	TRAITORJOE[self.TJGlobalName].Annoyances.Queue[annoyance] = CurTime()
 end
 
+function ENT:GetAnnoyanceInQueue(annoyance)
+	return TRAITORJOE[self.TJGlobalName].Annoyances.Queue[annoyance]
+end
+
 function ENT:SetAnnoyed(annoyance)
 	TRAITORJOE[self.TJGlobalName].Annoyances.Done[annoyance] = true
 end

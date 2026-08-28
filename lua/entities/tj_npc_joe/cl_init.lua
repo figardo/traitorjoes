@@ -234,6 +234,12 @@ ENT.ChatLayout = {
 		function(self) return true end -- close chat
 	},
 
+	["Joe.Final.Cheat.1"] = {
+		{face = "neutral", text = "Joe.Final.Cheat.2"},
+		{face = "smirk", text = "Joe.Final.Cheat.3"},
+		function(self) return true end -- close chat
+	},
+
 	-- Shop
 	["Joe.Shop.GMCredits.1"] = {
 		{face = "neutral", text = "Joe.Shop.GMCredits.2"},
@@ -464,6 +470,10 @@ ENT.ChatHooks = {
 		net.Start("TraitorJoe_BadEnding")
 		net.SendToServer()
 	end,
+	["Joe.Final.Cheat.3"] = function(self)
+		ErrorNoHalt("---=====TRAITOR JOE'S ANTI CHEAT====---\nU R CHEATING.\nU will b VAC b4nd or worse...\n")
+		TRAITORJOE.Joe.Cheater = true
+	end,
 	["Joe.Hat.Deerstalker.5"] = function(self)
 		self:EnableHat(true)
 
@@ -492,6 +502,10 @@ function ENT:GetInitialChat()
 
 	if ply:GetObserverMode() != OBS_MODE_NONE then
 		return {face = "annoyed", text = "Joe.Spec.1"}
+	end
+
+	if !TRAITORJOE.Joe.Cheater and IsValid(TRAITORJOE.Computer) and !(self:GetAnnoyed(ANNOY_FINAL) or self:GetAnnoyanceInQueue(ANNOY_FINAL)) then
+		return {face = "annoyed", text = "Joe.Final.Cheat.1"}
 	end
 
 	local children = ply:GetChildren()
