@@ -129,6 +129,11 @@ ENT.ChatLayout = {
 		{text = "Tony.Fire.2"},
 		Anyway
 	},
+	["Tony.Bones.1"] = {
+		{text = "Tony.Bones.2"},
+		{text = "Tony.Bones.3"},
+		Anyway
+	},
 	["Ellipses"] = { -- tony can't see spectators
 		function() return true end
 	}
@@ -155,7 +160,7 @@ ENT.ChatHooks = {
 	["Tony.Shot.2"] = function(self) self:SetAnnoyed(ANNOY_DAMAGE) end,
 	["Tony.Toolgun.2"] = function(self) self:SetAnnoyed(ANNOY_TOOLGUN) end,
 	["Tony.Fire.2"] = function(self) self:SetAnnoyed(ANNOY_FIRE) end,
-	-- ["Tony.Bones.2"] = function(self) self:SetAnnoyed(ANNOY_BONES) end,
+	["Tony.Bones.3"] = function(self) self:SetAnnoyed(ANNOY_BONES) end,
 
 	-- Misc
 	["Tony.Defib.5"] = function()
