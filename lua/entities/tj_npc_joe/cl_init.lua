@@ -136,7 +136,7 @@ local function placeMenu()
 		{face = "smirk", text = "Joe.SeemsFamiliar.11"}
 	}
 
-	if LocalPlayer():IsListenServerHost() and !IsMounted("treason") then
+	if #ents.FindByClass("tj_npc_tony") == 0 then
 		table.Add(tbl["Joe.HowsBusiness"], {
 			{face = "neutral", text = "Joe.HowsBusiness.NoTony.1"},
 			{face = "lookside", text = "Joe.HowsBusiness.NoTony.2"},
