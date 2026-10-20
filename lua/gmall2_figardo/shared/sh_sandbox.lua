@@ -37,6 +37,11 @@ EQUIP_DISGUISE = 4
 
 EQUIP_MAX      = 4
 
+ROUND_WAIT   = 1
+ROUND_PREP   = 2
+ROUND_ACTIVE = 3
+ROUND_POST   = 4
+
 LANG = {}
 
 -- SWEP helpers
@@ -64,7 +69,7 @@ function plymeta:HasEquipmentItem(id)
 	end
 end
 
-function GetRoundState() return 3 end -- ROUND_ACTIVE
+function GetRoundState() return ROUND_ACTIVE end
 
 function IsPlayer(ent)
 	return ent and ent:IsValid() and ent:IsPlayer()
