@@ -85,6 +85,10 @@ local function mainChat(self)
 	return tbl
 end
 
+local function Anyway(self)
+	return self:AnywayCheck({text = "Tony.Anyway"})
+end
+
 ENT.ChatLayout = {
 	["Tony.Intro.1"] = {
 		{text = "Tony.Intro.2"},
@@ -102,28 +106,28 @@ ENT.ChatLayout = {
 	-- Annoyances
 	["Tony.HatShot.1"] = {
 		{text = "Tony.HatShot.2"},
-		{text = "Tony.Anyway"}
+		Anyway
 	},
 	["Tony.Physgun.1"] = {
 		{text = "Tony.Physgun.2"},
 		{text = "Tony.Physgun.3"},
-		{text = "Tony.Anyway"}
+		Anyway
 	},
 	["Tony.RadioShot.1"] = {
 		{text = "Tony.RadioShot.2"},
-		{text = "Tony.Anyway"}
+		Anyway
 	},
 	["Tony.Shot.1"] = {
 		{text = "Tony.Shot.2"},
-		{text = "Tony.Anyway"}
+		Anyway
 	},
 	["Tony.Toolgun.1"] = {
 		{text = "Tony.Toolgun.2"},
-		{text = "Tony.Anyway"}
+		Anyway
 	},
 	["Tony.Fire.1"] = {
 		{text = "Tony.Fire.2"},
-		{text = "Tony.Anyway"}
+		Anyway
 	},
 	["Ellipses"] = { -- tony can't see spectators
 		function() return true end
@@ -144,6 +148,16 @@ local function WriteOldName(self)
 end
 
 ENT.ChatHooks = {
+	-- Annoyances
+	["Tony.HatShot.2"] = function(self) self:SetAnnoyed(ANNOY_HAT) end,
+	["Tony.Physgun.3"] = function(self) self:SetAnnoyed(ANNOY_PHYSGUN) end,
+	["Tony.RadioShot.2"] = function(self) self:SetAnnoyed(ANNOY_RADIO) end,
+	["Tony.Shot.2"] = function(self) self:SetAnnoyed(ANNOY_DAMAGE) end,
+	["Tony.Toolgun.2"] = function(self) self:SetAnnoyed(ANNOY_TOOLGUN) end,
+	["Tony.Fire.2"] = function(self) self:SetAnnoyed(ANNOY_FIRE) end,
+	-- ["Tony.Bones.2"] = function(self) self:SetAnnoyed(ANNOY_BONES) end,
+
+	-- Misc
 	["Tony.Defib.5"] = function()
 		net.Start("TraitorJoe_TonyDefib")
 		net.SendToServer()
@@ -188,4 +202,15 @@ function ENT:GetInitialChat()
 	end
 
 	return {face = "neutral", text = "Tony.Intro.1"}
+end
+
+function ENT:AnywayCheck(fallback)
+	local annoyance = self:AnnoyedCheck()
+	if annoyance then
+		self.ChatLayout["Also"] = {annoyance}
+		return {text = "Also"}
+	end
+
+	self.ChatLayout["Also"] = nil
+	return fallback
 end

@@ -88,7 +88,7 @@ ENT.ChatLayout = {
 }
 
 ENT.ChatPriority = {
-	-- lower = higher
+	-- lower = higher on the list
 	["Base.WhoAreYou"] = 1,
 	["Base.Give"] = 2,
 	["Base.Amstr"] = 3
@@ -412,7 +412,10 @@ function ENT:GetAnnoyanceInQueue(annoyance)
 end
 
 function ENT:SetAnnoyed(annoyance)
-	TRAITORJOE[self.TJGlobalName].Annoyances.Done[annoyance] = true
+	local annoyances = TRAITORJOE[self.TJGlobalName].Annoyances
+
+	annoyances.Queue[annoyance] = nil
+	annoyances.Done[annoyance] = true
 end
 
 function ENT:GetAnnoyed(annoyance)
@@ -426,21 +429,29 @@ end
 function ENT:AnnoyedCheck()
 	-- you've PISSED ME OFF and i need to tell you about it first thing
 	local annoyanceQueue = TRAITORJOE[self.TJGlobalName].Annoyances.Queue
-	if annoyanceQueue and table.Count(annoyanceQueue) > 0 then
-		local annoyance
-		local latest = 0
-		for k, v in pairs(annoyanceQueue) do
-			if v < latest or self:GetAnnoyed(v) then continue end
+	if !annoyanceQueue or table.Count(annoyanceQueue) <= 0 then return end
 
-			annoyance = k
-			latest = v
-		end
+	local annoyance
+	local latest = 0
+	for k, v in pairs(annoyanceQueue) do
+		if v < latest or self:GetAnnoyed(v) then continue end
 
-		if annoyance then
-			self:SetAnnoyed(annoyance)
-			TRAITORJOE[self.TJGlobalName].Annoyances.Queue = {}
-
-			return TRAITORJOE.Annoyances[annoyance][self:GetClass()]
-		end
+		annoyance = k
+		latest = v
 	end
+
+	if annoyance then
+		return TRAITORJOE.Annoyances[annoyance][self:GetClass()]
+	end
+end
+
+function ENT:AnywayCheck(fallback)
+	local annoyance = self:AnnoyedCheck()
+	if annoyance then
+		self.ChatLayout["Also"] = {annoyance}
+		return {face = "lookside", text = "Also"}
+	end
+
+	self.ChatLayout["Also"] = nil
+	return fallback
 end

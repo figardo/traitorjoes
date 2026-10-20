@@ -149,6 +149,10 @@ local function placeMenu()
 	return tbl
 end
 
+local function Anyway(self)
+	return self:AnywayCheck({face = "smile", text = "Joe.Anyway"})
+end
+
 ENT.ChatLayout = {
 	-- Welcome
 	["Joe.Welcome.1"] = {
@@ -285,99 +289,96 @@ ENT.ChatLayout = {
 		}
 	},
 	["Joe.ReadTheSign.Yes2"] = {
-		["Joe.ReadTheSign.Sorry"] = {{face = "smile", text = "Joe.Anyway"}}
+		["Joe.ReadTheSign.Sorry"] = {Anyway}
 	},
 	["Joe.ReadTheSign.No2"] = {
-		["Joe.ReadTheSign.Sorry"] = {{face = "smile", text = "Joe.Anyway"}},
+		["Joe.ReadTheSign.Sorry"] = {Anyway},
 		["Joe.ReadTheSign.WasntThere"] = {
 			{face = "annoyed", text = "Joe.ReadTheSign.WasntThere1"},
 			{face = "annoyed", text = "Joe.ReadTheSign.WasntThere2"},
 			{face = "smirk", text = "Joe.ReadTheSign.WasntThere3"},
-			{face = "smile", text = "Joe.Anyway"}
+			Anyway
 		}
 	},
 	["Joe.HatShot.1"] = {
 		{face = "angry", text = "Joe.HatShot.2"},
 		{face = "annoyed", text = "Joe.HatShot.3"},
 		{face = "smirk", text = "Joe.HatShot.4"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.RadioShot.1"] = {
 		{face = "smile", text = "Joe.RadioShot.2"},
 		{face = "neutral", text = "Joe.RadioShot.3"},
 		{face = "annoyed", text = "Joe.RadioShot.4"},
 		{face = "smirk", text = "Joe.RadioShot.5"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.BackRoom.1"] = {
 		{face = "lookside", text = "Joe.BackRoom.2"},
 		{face = "smirk", text = "Joe.BackRoom.3"},
 		{face = "annoyed", text = "Joe.BackRoom.4"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Physgun.1"] = {
 		{face = "annoyed", text = "Joe.Physgun.2"},
 		{face = "neutral", text = "Joe.Physgun.3"},
 		{face = "neutral", text = "Joe.Physgun.4"},
 		{face = "angry", text = "Joe.Physgun.5"},
-		{face = "annoyed", text = "Joe.Anyway"}
+
+		-- annoyed face
+		function(self) return self:AnywayCheck({face = "annoyed", text = "Joe.Anyway"}) end
 	},
 	["Joe.Shot.1"] = {
 		{face = "smile", text = "Joe.Shot.2"},
 		{face = "smirk", text = "Joe.Shot.3"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Toolgun.1"] = {
 		{face = "neutral", text = "Joe.Toolgun.2"},
 		{face = "angry", text = "Joe.Toolgun.3"},
 		{face = "lookside", text = "Joe.Toolgun.4"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Ammo.1"] = {
 		{face = "lookside", text = "Joe.Ammo.2"},
 		{face = "smirk", text = "Joe.Ammo.3"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Fire.1"] = {
 		{face = "smirk", text = "Joe.Fire.2"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Removed.Annoy"] = {
 		{face = "smile", text = "Joe.Removed.1"}
 	},
 	["Joe.Removed.1"] = {
 		{face = "smirk", text = "Joe.Removed.2"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Display.1"] = {
 		{face = "smirk", text = "Joe.Display.2"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Moved.1"] = {
 		{face = "neutral", text = "Joe.Moved.2"},
 		{face = "lookside", text = "Joe.Moved.3"},
 		{face = "smirk", text = "Joe.Moved.4"},
-		{face = "smile", text = "Joe.Anyway"}
-	},
-	["Joe.Spec.1"] = {
-		{face = "lookside", text = "Joe.Spec.2"},
-		{face = "smirk", text = "Joe.Spec.3"},
-		function(self) return true end -- close chat
+		Anyway
 	},
 	["Joe.Bones.1"] = {
 		{face = "angry", text = "Joe.Bones.2"},
 		{face = "smirk", text = "Joe.Bones.3"},
 		{face = "grin", text = "Joe.Bones.4"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Spray.1"] = {
 		{face = "smirk", text = "Joe.Spray.2"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Spawn.1"] = {
 		{face = "smirk", text = "Joe.Spawn.2"},
 		{face = "annoyed", text = "Joe.Spawn.3"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 
 	-- Hats
@@ -386,24 +387,24 @@ ENT.ChatLayout = {
 		{face = "lookside", text = "Joe.Hat.Cap.3"},
 		{face = "smile", text = "Joe.Hat.Cap.4"},
 		{face = "smirk", text = "Joe.Hat.Cap.5"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Hat.Deerstalker.1"] = {
 		{face = "smirk", text = "Joe.Hat.Deerstalker.2"},
 		{face = "neutral", text = "Joe.Hat.Deerstalker.3"},
 		{face = "smirk", text = "Joe.Hat.Deerstalker.4"},
 		{face = "annoyed", text = "Joe.Hat.Deerstalker.5"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Hat.Fedora.1"] = {
 		{face = "smirk", text = "Joe.Hat.Fedora.2"},
 		{face = "neutral", text = "Joe.Hat.Fedora.3"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.Hat.Other.1"] = {
 		{face = "smirk", text = "Joe.Hat.Other.2"},
 		{face = "smile", text = "Joe.Hat.Other.3"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 
 	-- Forks
@@ -412,14 +413,21 @@ ENT.ChatLayout = {
 		{face = "smirk", text = "Joe.CR.3"},
 		{face = "neutral", text = "Joe.CR.4"},
 		{face = "smirk", text = "Joe.CR.5"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
 	},
 	["Joe.TTT2.1"] = {
 		{face = "annoyed", text = "Joe.TTT2.2"},
 		{face = "lookside", text = "Joe.TTT2.3"},
 		{face = "smile", text = "Joe.TTT2.4"},
 		{face = "neutral", text = "Joe.TTT2.5"},
-		{face = "smile", text = "Joe.Anyway"}
+		Anyway
+	},
+
+	-- Misc
+	["Joe.Spec.1"] = {
+		{face = "lookside", text = "Joe.Spec.2"},
+		{face = "smirk", text = "Joe.Spec.3"},
+		function(self) return true end -- close chat
 	}
 }
 
@@ -444,6 +452,25 @@ ENT.ChatPriority = {
 }
 
 ENT.ChatHooks = {
+	-- Annoys
+	["Joe.ReadTheSign.No2"] = function(self) self:SetAnnoyed(ANNOY_NOCLIP) end,
+	["Joe.ReadTheSign.Yes2"] = function(self) self:SetAnnoyed(ANNOY_NOCLIP) end,
+	["Joe.HatShot.4"] = function(self) self:SetAnnoyed(ANNOY_HAT) end,
+	["Joe.RadioShot.5"] = function(self) self:SetAnnoyed(ANNOY_RADIO) end,
+	["Joe.BackRoom.4"] = function(self) self:SetAnnoyed(ANNOY_BACKROOM) end,
+	["Joe.Physgun.5"] = function(self) self:SetAnnoyed(ANNOY_PHYSGUN) end,
+	["Joe.Shot.3"] = function(self) self:SetAnnoyed(ANNOY_DAMAGE) end,
+	["Joe.Toolgun.4"] = function(self) self:SetAnnoyed(ANNOY_TOOLGUN) end,
+	["Joe.Ammo.3"] = function(self) self:SetAnnoyed(ANNOY_SMASH) end,
+	["Joe.Fire.2"] = function(self) self:SetAnnoyed(ANNOY_FIRE) end,
+	["Joe.Removed.2"] = function(self) self:SetAnnoyed(ANNOY_REMOVED) end,
+	["Joe.Display.2"] = function(self) self:SetAnnoyed(ANNOY_DISPLAY) end,
+	["Joe.Moved.4"] = function(self) self:SetAnnoyed(ANNOY_MOVED) end,
+	["Joe.Bones.4"] = function(self) self:SetAnnoyed(ANNOY_BONES) end,
+	["Joe.Spray.2"] = function(self) self:SetAnnoyed(ANNOY_SPRAY) end,
+	["Joe.Spawn.3"] = function(self) self:SetAnnoyed(ANNOY_SPAWN) end,
+
+	-- Misc
 	["Joe.Talk.2"] = function(self) self.Talked = true end,
 	["Joe.MemberCard.5"] = function(self)
 		TRAITORJOE.Joe.Membership = true
@@ -490,7 +517,7 @@ ENT.AnnoyMessages = {
 	}
 }
 
-local hatResponses = {
+ENT.HatResponses = {
 	["models/mall_member/figardo/vending_hat.mdl"] = {face = "grin", text = "Joe.Hat.Cap.1"},
 	["models/mall_member/figardo/deerstalker.mdl"] = {face = "angry", text = "Joe.Hat.Deerstalker.1"},
 	["models/player/mafia_hat_medium.mdl"] = {face = "annoyed", text = "Joe.Hat.Fedora.1"},
@@ -513,8 +540,8 @@ function ENT:GetInitialChat()
 		local child = children[i]
 		if child:GetClass() != "tj_hat" then continue end
 
-		local response = hatResponses[child:GetModel()]
-		if !response then response = hatResponses["other"] end
+		local response = self.HatResponses[child:GetModel()]
+		if !response then response = self.HatResponses["other"] end
 
 		if response.done then break end
 
