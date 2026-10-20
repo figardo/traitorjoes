@@ -485,15 +485,18 @@ ENT.ChatHooks = {
 		net.SendToServer()
 	end,
 	["Joe.Final.1"] = function(self)
+		self:SetAnnoyed(ANNOY_FINAL)
 		TRAITORJOE.Joe.SellWeapons = true
 	end,
 	["Joe.Final.Good.1"] = function(self)
+		self:SetAnnoyed(ANNOY_FINAL)
 		TRAITORJOE.Joe.SellWeapons = true
 
 		net.Start("TraitorJoe_SpawnBin")
 		net.SendToServer()
 	end,
 	["Joe.Final.Bad.3"] = function(self)
+		self:SetAnnoyed(ANNOY_FINAL)
 		net.Start("TraitorJoe_BadEnding")
 		net.SendToServer()
 	end,
