@@ -151,17 +151,17 @@ for folder, tbl in pairs(toRegister) do
 	end
 end
 
-if CLIENT then
-	-- c4's cl_init.lua depends on DButton being loaded which happens post gamemode
-	-- however, registering ents here breaks DEFINE_BASECLASS
-	hook.Add("PostGamemodeLoaded", "TraitorJoesC4Hack", function()
+hook.Add("PostGamemodeLoaded", "TraitorJoesWeaponHacks", function()
+	local tbl
+
+	if CLIENT then
+		-- c4's cl_init.lua depends on DButton being loaded which happens post gamemode
+		-- however, registering ents here breaks DEFINE_BASECLASS
 		RegisterTTTEntity("entities", {"ttt_c4/shared", "ttt_c4/cl_init"}, globals.entities)
-	end)
-else
-	hook.Add("PostGamemodeLoaded", "TraitorJoesC4Hack", function()
+	else
 		-- spheredamage checks for ply:Team() == TEAM_TERROR and i would rather not fuck with teams in sandbox
-		local e = scripted_ents.GetStored("ttt_c4").t
-		function e:SphereDamage(dmgowner, center, radius)
+		tbl = scripted_ents.GetStored("ttt_c4").t
+		function tbl:SphereDamage(dmgowner, center, radius)
 			local r = radius ^ 2
 
 			local d = 0.0
@@ -187,5 +187,40 @@ else
 				ent:TakeDamageInfo(dmginfo)
 			end
 		end
-	end)
-end
+	end
+
+	-- ply:GetEyeTrace does not work with the map placed prop_ragdoll
+	tbl = weapons.GetStored("weapon_ttt_binoculars")
+	function tbl:IsTargetingCorpse()
+		local ply = self:GetOwner()
+		local tr = util.TraceLine({
+			start  = ply:GetShootPos(),
+			endpos = ply:GetShootPos() + ply:GetAimVector() * (4096 * 8),
+			filter = ply,
+			mask   = MASK_SHOT
+		})
+
+		local ent = tr.Entity
+
+		return IsValid(ent) and ent:GetClass() == "prop_ragdoll" and ent:GetNW2String("gmall_figardo") == "tj_shitleton"
+	end
+
+	local confirm = Sound("npc/turret_floor/click1.wav")
+	function tbl:IdentifyCorpse()
+		if CLIENT and IsFirstTimePredicted() then
+			local ply = self:GetOwner()
+			ply:EmitSound(confirm)
+
+			local tr = util.TraceLine({
+				start  = ply:GetShootPos(),
+				endpos = ply:GetShootPos() + ply:GetAimVector() * (4096 * 8),
+				filter = ply,
+				mask   = MASK_SHOT
+			})
+
+			if IsValid(tr.Entity) and tr.Entity:GetNW2String("gmall_figardo") == "tj_shitleton" then
+				TRAITORJOE.UseEnts["tj_shitleton"](tr.Entity)
+			end
+		end
+	end
+end)

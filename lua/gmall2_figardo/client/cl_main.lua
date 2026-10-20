@@ -129,7 +129,7 @@ hook.Add("PlayerBindPress", "TraitorJoesMagicUseKey", function(ply, bind, presse
 	if !tr.Hit then return end
 
 	local ent = tr.Entity
-	if !ent then return end
+	if !IsValid(ent) then return end
 
 	local func = TRAITORJOE.UseEnts[ent:GetNW2String("gmall_figardo")]
 	if !func then
