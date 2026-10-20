@@ -157,4 +157,35 @@ if CLIENT then
 	hook.Add("PostGamemodeLoaded", "TraitorJoesC4Hack", function()
 		RegisterTTTEntity("entities", {"ttt_c4/shared", "ttt_c4/cl_init"}, globals.entities)
 	end)
+else
+	hook.Add("PostGamemodeLoaded", "TraitorJoesC4Hack", function()
+		-- spheredamage checks for ply:Team() == TEAM_TERROR and i would rather not fuck with teams in sandbox
+		local e = scripted_ents.GetStored("ttt_c4").t
+		function e:SphereDamage(dmgowner, center, radius)
+			local r = radius ^ 2
+
+			local d = 0.0
+			local dmg = 0
+			for _, ent in player.Iterator() do
+				if !IsValid(ent) or !ent:IsTerror() then continue end
+
+				d = center:DistToSqr(ent:GetPos())
+
+				if d >= r then continue end
+
+				d = math.max(0, math.sqrt(d) - 490)
+				dmg = -0.01 * (d^2) + 125
+
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage(dmg)
+				dmginfo:SetAttacker(dmgowner)
+				dmginfo:SetInflictor(self)
+				dmginfo:SetDamageType(DMG_BLAST)
+				dmginfo:SetDamageForce(center - ent:GetPos())
+				dmginfo:SetDamagePosition(ent:GetPos())
+
+				ent:TakeDamageInfo(dmginfo)
+			end
+		end
+	end)
 end
