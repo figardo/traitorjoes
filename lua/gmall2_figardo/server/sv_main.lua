@@ -98,6 +98,22 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 			end
 		end
 
+		local bku = ents.FindByName("tj_shitleton")[1]
+		if !IsValid(bku) and #ents.FindByClass("tj_npc_bku") == 0 and #ents.FindByClass("weapon_ttt_tj_defib") > 0 then
+			local spawn
+			for _, e in ipairs(ents.FindByName("tj_bku_spawn")) do
+				spawn = e
+				break
+			end
+
+			if IsValid(spawn) then
+				local npc = ents.Create("tj_npc_bku")
+				npc:SetPos(spawn:GetPos())
+				npc:SetAngles(spawn:GetAngles())
+				npc:Spawn()
+			end
+		end
+
 		if IsValid(self.Radio) then
 			self.Radio:StopRadio()
 		else
