@@ -49,7 +49,7 @@ local mainChat = {
 		local tbl
 		local annoys = table.Count(TRAITORJOE.Joe.Annoyances.Done) + table.Count(TRAITORJOE.Joe.Annoyances.Queue)
 
-		if annoys >= ANNOY_MAX - 1 then
+		if annoys >= ANNOY_MAX then
 			tbl = {{text = "BKU.Trouble.Yes"}}
 		elseif annoys > 0 then
 			tbl = {{text = "BKU.Trouble.Maybe"}}
