@@ -49,11 +49,17 @@ LANG = {}
 local plymeta = FindMetaTable("Player")
 plymeta.IsTerror = plymeta.Alive
 plymeta.IsActive = plymeta.Alive
-function plymeta:IsTraitor() return false end
-function plymeta:IsDetective() return false end
+function plymeta:GetTraitor() return false end
+function plymeta:GetDetective() return false end
 function plymeta:IsActiveDetective() return false end
 function plymeta:IsActiveTraitor() return false end
 function plymeta:IsActiveSpecial() return true end
+function plymeta:GetRole() return ROLE_INNOCENT end
+function plymeta:GetRoleString() return "Innocent" end
+function plymeta:GetRoleStringRaw() return "innocent" end
+
+plymeta.IsTraitor = plymeta.GetTraitor
+plymeta.IsDetective = plymeta.GetDetective
 
 function plymeta:GetCredits() return self.equipment_credits or 0 end
 
@@ -119,6 +125,14 @@ function util.SimpleTime(seconds, fmt)
 	local m = seconds % 60
 
 	return string.format(fmt, m, s, ms)
+end
+
+local zapsound = Sound("npc/assassin/ball_zap1.wav")
+function util.EquipmentDestroyed(pos)
+	local effect = EffectData()
+	effect:SetOrigin(pos)
+	util.Effect("cball_explode", effect)
+	sound.Play(zapsound, pos)
 end
 
 WEPS = {}
