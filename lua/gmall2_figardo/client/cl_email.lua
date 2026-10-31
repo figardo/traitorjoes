@@ -24,6 +24,7 @@ local emailData = {
 		icon = emailRead,
 		send = true,
 		emails = {
+			{name = "Anyone Please", email = "anyone@github.com", subject = "#TraitorJoes.Translation.Subject", text = "TraitorJoes.Translation.Text"}
 		}
 	},
 	{
