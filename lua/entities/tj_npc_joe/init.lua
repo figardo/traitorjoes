@@ -64,14 +64,11 @@ function ENT:BuyItem(ply, id)
 	end
 
 	local sid = ply:SteamID64()
-	local is_member = TRAITORJOE.Joe.Members[sid]
-	if is_member then
-		if !TRAITORJOE.Joe.ItemsBought[sid] then
-			TRAITORJOE.Joe.ItemsBought[sid] = 0
-		end
-
-		TRAITORJOE.Joe.ItemsBought[sid] = math.min(TRAITORJOE.Joe.ItemsBought[sid] + 1, prizeThreshold)
+	if !TRAITORJOE.Joe.ItemsBought[sid] then
+		TRAITORJOE.Joe.ItemsBought[sid] = 0
 	end
+
+	TRAITORJOE.Joe.ItemsBought[sid] = math.min(TRAITORJOE.Joe.ItemsBought[sid] + 1, prizeThreshold)
 
 	net.Start("TraitorJoe_BuyItem")
 		net.WriteBool(is_item)
@@ -81,10 +78,7 @@ function ENT:BuyItem(ply, id)
 			net.WriteString(item.id)
 		end
 
-		net.WriteBool(is_member)
-		if is_member then
-			net.WriteUInt(TRAITORJOE.Joe.ItemsBought[sid], 3)
-		end
+		net.WriteUInt(TRAITORJOE.Joe.ItemsBought[sid], 3)
 	net.Send(ply)
 end
 net.Receive("TraitorJoe_BuyItem", function(_, ply)
