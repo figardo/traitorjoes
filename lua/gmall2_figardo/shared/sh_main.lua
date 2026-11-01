@@ -159,6 +159,8 @@ hook.Add("PostGamemodeLoaded", "TraitorJoesExtraWeapons", function()
 			npc:SetAngles(spawn:GetAngles())
 			npc:Spawn()
 
+			TRAITORJOE.BKU.Entity = npc
+
 			self:EmitSound("ambient/energy/zap7.wav")
 		end
 

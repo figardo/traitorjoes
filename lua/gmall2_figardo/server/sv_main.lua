@@ -102,8 +102,8 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 			end
 		end
 
-		local bku = ents.FindByName("tj_shitleton")[1]
-		if !IsValid(bku) and #ents.FindByClass("tj_npc_bku") == 0 and #ents.FindByClass("weapon_ttt_tj_defib") > 0 then
+		local bku_corpse = ents.FindByName("tj_shitleton")[1]
+		if !IsValid(bku_corpse) and !IsValid(self.BKU.Entity) and #ents.FindByClass("weapon_ttt_tj_defib") > 0 then
 			local spawn
 			for _, e in ipairs(ents.FindByName("tj_bku_spawn")) do
 				spawn = e
@@ -111,14 +111,9 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 			end
 
 			if IsValid(spawn) then
-				local npc = ents.Create("tj_npc_bku")
-				if !IsValid(npc) then
-					error("tj_npc_bku doesn't exist!")
-				end
+				local npc = SpawnOnTarget("tj_npc_bku", spawn)
 
-				npc:SetPos(spawn:GetPos())
-				npc:SetAngles(spawn:GetAngles())
-				npc:Spawn()
+				self.BKU.Entity = npc
 			end
 		end
 
@@ -391,13 +386,7 @@ net.Receive("TraitorJoe_TonyDefib", function(_, ply)
 end)
 
 net.Receive("TraitorJoe_BKUCredits", function(_, ply)
-	local bku
-	for _, ent in ipairs(ents.FindByClass("tj_npc_bku")) do
-		bku = ent
-		break
-	end
-
-	if !IsValid(bku) then return end -- if you're gonna cheat at least let bku exist first
+	if !IsValid(TRAITORJOE.BKU.Entity) then return end -- if you're gonna cheat at least let bku exist first
 
 	if ply:GetCredits() >= 5 then return end
 
