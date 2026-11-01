@@ -22,7 +22,7 @@ function TRAITORJOE.SendAnnoyance(annoyance, ply, class)
 	end
 
 	if !IsValid(ent) then
-		error("Trying to annoy invalid classname!")
+		error("Trying to annoy invalid classname " .. class .. "!")
 	end
 
 	ent:Annoy(annoyance, ply)
@@ -30,6 +30,10 @@ end
 
 local function SpawnOnTarget(class, target, noSpawn)
 	local ent = ents.Create(class)
+	if !IsValid(ent) then
+		error("Couldn't create " .. class .. "!")
+	end
+
 	ent:SetPos(target:GetPos())
 	ent:SetAngles(target:GetAngles())
 
@@ -108,6 +112,10 @@ function TRAITORJOE:OnEnterOrLeave(left, noAnnoy)
 
 			if IsValid(spawn) then
 				local npc = ents.Create("tj_npc_bku")
+				if !IsValid(npc) then
+					error("tj_npc_bku doesn't exist!")
+				end
+
 				npc:SetPos(spawn:GetPos())
 				npc:SetAngles(spawn:GetAngles())
 				npc:Spawn()
