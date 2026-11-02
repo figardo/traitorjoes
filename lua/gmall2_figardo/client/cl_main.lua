@@ -98,23 +98,21 @@ end)
 
 TRAITORJOE.UseEnts["tj_shitphone"] = function()
 	if IsValid(TRAITORJOE.Overlay) then
+		TRAITORJOE.Overlay:Remove()
 		return
 	end
 
-	local tjOverlay = vgui.Create("DImage")
-	tjOverlay:SetSize(ScrW(), ScrH())
-	tjOverlay:SetImage("mall_member/figardo/phonemsg")
-
-	hook.Add("PlayerBindPress", "TraitorJoeClosePhoneMsg", function(ply, bind, pressed)
-		if IsValid(tjOverlay) then
-			tjOverlay:Remove()
-		end
-
-		hook.Remove("PlayerBindPress", "TraitorJoeClosePhoneMsg")
-	end)
+	TRAITORJOE.Overlay = vgui.Create("DImage")
+	TRAITORJOE.Overlay:SetSize(ScrW(), ScrH())
+	TRAITORJOE.Overlay:SetImage("mall_member/figardo/phonemsg")
 end
 
 hook.Add("PlayerBindPress", "TraitorJoesMagicUseKey", function(ply, bind, pressed)
+	-- only applies to phone in practice
+	if IsValid(TRAITORJOE.Overlay) then
+		TRAITORJOE.Overlay:Remove()
+	end
+
 	if bind != "+use" then return end
 
 	local tr = util.TraceLine({
