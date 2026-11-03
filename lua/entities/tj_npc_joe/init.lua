@@ -137,20 +137,11 @@ net.Receive("TraitorJoe_Redeem", function(_, ply)
 
 	joe:Vanish(true)
 
-	local entCount = 3
-	for _, ent in ents.Iterator() do
-		if entCount == 0 then
-			break
-		end
+	for _, ent in ipairs(ents.FindByName("tj_backroom_tp")) do
+		ent:Remove()
+	end
 
-		local name = ent:GetName()
-		if name == "tj_backroom_tp" then
-			ent:Remove()
-			entCount = entCount - 1
-			continue
-		elseif name == "tj_backroom_final" then
-			ent:Fire("Enable")
-			entCount = entCount - 1
-		end
+	for _, ent in ipairs(ents.FindByName("tj_backroom_final")) do
+		ent:Fire("Enable")
 	end
 end)
