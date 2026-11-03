@@ -70,7 +70,7 @@ ANNOY_BACKROOM = RegisterAnnoyance({["tj_npc_joe"] = {face = "neutral", text = "
 ANNOY_SMASH = RegisterAnnoyance({["tj_npc_joe"] = {face = "annoyed", text = "Joe.Ammo.1"}})
 ANNOY_REMOVED = RegisterAnnoyance({
 	["tj_npc_joe"] = function(self)
-		return self:GetAnnoyanceCount() > 1 and {face = "grin", text = "Joe.Removed.Annoy"} or {face = "smile", text = "Joe.Removed.1"}
+		return self:GetAnnoyanceCount() > 0 and {face = "grin", text = "Joe.Removed.Annoy"} or {face = "smile", text = "Joe.Removed.1"}
 	end
 })
 ANNOY_DISPLAY = RegisterAnnoyance({["tj_npc_joe"] = {face = "neutral", text = "Joe.Display.1"}})
@@ -82,7 +82,7 @@ ANNOY_FINAL = RegisterAnnoyance({
 		local annoys = self:GetAnnoyanceCount()
 		if annoys >= ANNOY_MAX then
 			return {face = "angry", text = "Joe.Final.Bad.1"}
-		elseif annoys > 1 then
+		elseif annoys > 0 then
 			return {face = "annoyed", text = "Joe.Final.1"}
 		end
 
