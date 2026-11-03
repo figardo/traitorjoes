@@ -348,6 +348,24 @@ net.Receive("TraitorJoe_SpawnDefib", function(_, ply)
 	spawn:EmitSound("physics/glass/glass_largesheet_break3.wav")
 
 	SpawnOnTarget("weapon_ttt_tj_defib", spawn)
+
+	timer.Create("TraitorJoesDefibSparks", 3, 0, function()
+		for _, ent in ipairs(ents.FindInSphere(spawn:GetPos(), 10)) do
+			if ent:GetClass() != "weapon_ttt_tj_defib" or IsValid(ent:GetOwner()) then continue end
+
+			local ef = EffectData()
+			ef:SetOrigin(ent:GetPos())
+			ef:SetMagnitude(2)
+			ef:SetScale(1)
+			ef:SetRadius(2)
+			util.Effect("Sparks", ef)
+
+			ent:EmitSound("Weapon_StunStick.Activate")
+			return
+		end
+
+		timer.Remove("TraitorJoesDefibSparks")
+	end)
 end)
 
 net.Receive("TraitorJoe_SpawnBin", function(_, ply)
