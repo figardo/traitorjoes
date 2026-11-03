@@ -90,8 +90,9 @@ ANNOY_FINAL = RegisterAnnoyance({
 	end
 })
 
--- Extra SWEP Registration
+-- Hooks
 
+-- Extra SWEP Registration
 hook.Add("PostGamemodeLoaded", "TraitorJoesExtraWeapons", function()
 	-- Carbine
 	local tbl = weapons.Get("weapon_ttt_m16")
@@ -175,3 +176,10 @@ hook.Add("PostGamemodeLoaded", "TraitorJoesExtraWeapons", function()
 		weapons.Register(tbl, "weapon_ttt_tj_defib")
 	end
 end)
+
+-- don't fuck with bku's door
+if SERVER then
+	hook.Add("CanProperty", "TraitorJoesDoorProtection", function(ply, prop, ent)
+		if ent:GetName() == "tj_shitdoor" then return false end
+	end)
+end
