@@ -344,7 +344,7 @@ local function ShowEmailScreen(self)
 
 						sndpnl.DoClick = function(s)
 							if !edata.snd or !edata.snd:IsPlaying() then
-								local snd = CreateSound(TRAITORJOE.Computer, edata.att)
+								local snd = CreateSound(self, edata.att)
 								snd:Play()
 								snd:ChangeVolume(0.1)
 

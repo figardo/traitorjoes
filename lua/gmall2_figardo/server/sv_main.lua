@@ -29,6 +29,10 @@ function TRAITORJOE.SendAnnoyance(annoyance, ply, class)
 end
 
 local function SpawnOnTarget(class, target, noSpawn)
+	if !IsValid(target) then
+		error("Trying to spawn " .. class .. " at invalid target!")
+	end
+
 	local ent = ents.Create(class)
 	if !IsValid(ent) then
 		error("Couldn't create " .. class .. "!")
@@ -369,6 +373,13 @@ net.Receive("TraitorJoe_SpawnDefib", function(_, ply)
 end)
 
 net.Receive("TraitorJoe_SpawnBin", function(_, ply)
+	if !IsValid(TRAITORJOE.BinSpawn) then
+		for _, ent in ipairs(ents.FindByName("tj_bin_spawn")) do
+			TRAITORJOE.BinSpawn = ent
+			break
+		end
+	end
+
 	for _, ent in ipairs(ents.FindByClass("tj_bin")) do
 		return -- if there's already a bin then don't bother spawning another
 	end
