@@ -277,7 +277,7 @@ function ENT:ShowShopScreen(chatOverride)
 
 		can_order = update_preqs(new.item)
 
-		if new.item.chat then
+		if IsValid(self) and new.item.chat then
 			dtext:SetText(self:ChatToString(new.item.chat.text))
 			dface:SetFace(self.FaceFolder, new.item.chat.face)
 		end
